@@ -1,8 +1,14 @@
 const sql = require('mssql/msnodesqlv8');
 
+const jwt = require("jsonwebtoken");
+
 let config = {
   server: 'AMAR\\MSSQLSERVER01',
+  // server: 'DESKTOP-9PUG3BB',
+  // username:'sa',
+  // password
   database: 'IcSoft',
+  // database: 'AEAPL',
   driver: 'msnodesqlv8',
   options: {
     trustedConnection: true,
@@ -22,7 +28,6 @@ const search = async (req, res) => {
     await sql.connect(config); // Wait for the database connection to be established
     let request = new sql.Request();
     const data = await request.query(querry); // Wait for the query to complete
-    console.log(data);
     res.send(data.recordset); // Assuming you want to send the query result as a response
   } catch (err) {
     console.error(err);
@@ -73,11 +78,11 @@ const insert1 = async (req, res) => {
 // };
 
 const insert = async (req, res) => {
-    const { PaymentTerms, LDClause, QAPNeeded, MaterialGrade, HTConditions, SupplyConditions, DeliveryConditions, DrawingNo, TestPcs } = req.body;
+    const { PaymentTerms, LDClause, QAPNeeded, MaterialGrade, HTConditions, SupplyConditions, DeliveryConditions, DrawingNo, TestPcs, CustCode} = req.body;
 
     const insertQuery = `
-        INSERT INTO St_Enquiry_Review (PaymentTerms, LDClause, QAPNeeded, MaterialGrade, HTConditions, SupplyConditions, DeliveryConditions, DrawingNo, TestPcs)
-        VALUES (@PaymentTerms, @LDClause, @QAPNeeded, @MaterialGrade, @HTConditions, @SupplyConditions, @DeliveryConditions, @DrawingNo, @TestPcs)
+        INSERT INTO St_Enquiry_Review (PaymentTerms, LDClause, QAPNeeded, MaterialGrade, HTConditions, SupplyConditions, DeliveryConditions, DrawingNo, TestPcs,CustCode)
+        VALUES (@PaymentTerms, @LDClause, @QAPNeeded, @MaterialGrade, @HTConditions, @SupplyConditions, @DeliveryConditions, @DrawingNo, @TestPcs,@CustCode)
     `;
 
     const selectQuery = `
@@ -98,6 +103,8 @@ const insert = async (req, res) => {
         request.input('DeliveryConditions', sql.NVarChar, DeliveryConditions);
         request.input('DrawingNo', sql.NVarChar, DrawingNo);
         request.input('TestPcs', sql.NVarChar, TestPcs);
+        request.input('CustCode', sql.NVarChar, CustCode);
+
 
         const insertResult = await request.query(insertQuery); // Wait for the insert query to complete
 
@@ -118,8 +125,42 @@ const insert = async (req, res) => {
 
 
 
+
+const USER_LOGIN = async (req, res, next) => {
+    try {
+        const { email, password } = req.body;
+        const EMAIL= 'vivek@sidtech.net'
+        const PASSWORD= 'vivek';
+        const NAME = 'Super Admin'
+        const ID="65047d04c8c3f02754fb9737"
+        const JWT_SECRET = 'vivek'
+
+        // Logic for Super Admin
+        if (EMAIL === email && PASSWORD === password) {
+            const superAdmin = {
+                _id: ID,
+                fullname: NAME,
+                email,
+                mobile: 7272096364,
+                user_access: ["all"],
+                status: true,
+            };
+            const token = jwt.sign({ id: superAdmin._id }, JWT_SECRET);
+            return res.status(200).json({ token, user: superAdmin });
+        }
+        else{
+          return res.status(400).json({msg: "user doesn't exist"})        }
+
+    } catch (error) {
+        return next(error)
+    }
+}
+
+
+
 module.exports = {
     search,
-    insert
+    insert,
+    USER_LOGIN
 
 }

@@ -8,8 +8,9 @@ const app = express();
 const port = process.env.port || 5001;
 
 var corOption = {
-    origin: "https://vikrant-dashboard-1.vercel.app",
+    origin: ["https://vikrant-dashboard-1.vercel.app", "http://localhost:5173","https://vikranta-dashboard-new.vercel.app","https://main--stalwart-tartufo-830372.netlify.app"]
 };
+
 
 app.use(cors(corOption));
 app.use(express.json());
@@ -24,5 +25,5 @@ app.get("", (req, res) => {
 });
 
 app.listen(port, () => {
-    console.log(`server is listening to the port number :- ${port}`);
+    console.log(`server is listening to the port number :- ${port} running on http://localhost:${port}`);
 });
