@@ -1,7 +1,10 @@
 {
-  "name": "work",
+  "name": "vikranta",
   "version": "1.0.0",
   "description": "Working for Sidtech",
+  "bin": {
+    "my-program": "./index.js"
+  },
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
