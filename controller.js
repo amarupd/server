@@ -1,19 +1,43 @@
-const sql = require('mssql/msnodesqlv8');
+const sql = require('mssql');
 
 const jwt = require("jsonwebtoken");
 
-let config = {
-  // server: 'AMAR\\MSSQLSERVER01',
-  server: 'DESKTOP-9PUG3BB',
-  // username:'sa',
-  // password
-  // database: 'IcSoft',
-  database: 'AEAPL',
-  driver: 'msnodesqlv8',
-  options: {
-    trustedConnection: true,
+// const sql = require('mssql');
+
+const config = {
+  // user: process.env.DB_USER,
+  // password: process.env.DB_PWD,
+  database: 'IcSoft',
+  server: 'AMAR\\MSSQLSERVER01',
+  pool: {
+    max: 10,
+    min: 0,
+    idleTimeoutMillis: 30000
   },
+  options: {
+    // encrypt: true, // for azure
+    trustServerCertificate: false // change to true for local dev / self-signed certs
+  }
 };
+
+// ... your other functions
+
+// await sql.connect('Server=localhost,1433;Database=database;User Id=username;Password=password;Encrypt=true')
+
+// let config = {
+//   server: 'AMAR\\MSSQLSERVER01',
+//   // server: 'DESKTOP-9PUG3BB',
+//   // server:'DESKTOP-EOCTU19',
+//   // username:'sa',
+//   // password
+//   port:1433,
+//   database: 'IcSoft',
+//   // database: 'AEAPL',
+//   // driver: 'msnodesqlv8',
+//   options: {
+//     trustedConnection: true,
+//   },
+// };
 
 const search = async (req, res) => {
   const querry = `Select c.CustCode, c.CustName,  e.Enq_Ref_No, e.Date_of_Enquiry, e.Due_Date, 
