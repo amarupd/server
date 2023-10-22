@@ -3,12 +3,12 @@ const sql = require('mssql/msnodesqlv8');
 const jwt = require("jsonwebtoken");
 
 let config = {
-  server: 'AMAR\\MSSQLSERVER01',
-  // server: 'DESKTOP-9PUG3BB',
+  // server: 'AMAR\\MSSQLSERVER01',
+  server: 'DESKTOP-9PUG3BB',
   // username:'sa',
   // password
-  database: 'IcSoft',
-  // database: 'AEAPL',
+  // database: 'IcSoft',
+  database: 'AEAPL',
   driver: 'msnodesqlv8',
   options: {
     trustedConnection: true,
