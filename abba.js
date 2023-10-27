@@ -1,8 +1,9 @@
 const sql = require('mssql/msnodesqlv8');
 
 let config = {
-  server: 'AMAR\\MSSQLSERVER01',
-  database: 'IcSoft',
+  // server: 'AMAR\\MSSQLSERVER01',
+  server:'AMAR\\AMARDUTT',
+  database: 'Icsoft',
   driver: 'msnodesqlv8',
   options: {
     trustedConnection: true,
