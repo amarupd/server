@@ -8,7 +8,7 @@ const app = express();
 const port = process.env.port || 5001;
 
 var corOption = {
-    origin: ["https://vikrant-dashboard-1.vercel.app", "http://localhost:5173","https://vikranta-dashboard-new.vercel.app","https://main--stalwart-tartufo-830372.netlify.app"]
+    origin: ["https://vikrant-dashboard-1.vercel.app","https://sidtech.vercel.app", "http://localhost:5173","https://vikranta-dashboard-new.vercel.app","https://main--stalwart-tartufo-830372.netlify.app"]
 };
 
 
