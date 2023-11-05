@@ -25,18 +25,20 @@ const jwt = require("jsonwebtoken");
 // await sql.connect('Server=localhost,1433;Database=database;User Id=username;Password=password;Encrypt=true')
 
 let config = {
-  server: 'AMAR\\AMARDUTT',
+  // server: 'AMAR\\AMARDUTT',
+  // server: "192.168.1.43",
   // server: 'DESKTOP-9PUG3BB',
   // server:'erpsvr',
   // server:'DESKTOP-U57CKVJ',
   // server:'192.168.2.2',
+  server:"192.168.255.219",
   // server:"192.168.45.219",
   // sever:"",
   // server:"ERPSRV\\SQLEXPRESS",
   user:'sa',
   // password:'R00t@321',
-  password:'amar',
-  // password:"piyush",
+  // password:'amar',
+  password:"piyush",
   port:1433,
   database: 'Icsoft',
   // database: 'AEAPL',
