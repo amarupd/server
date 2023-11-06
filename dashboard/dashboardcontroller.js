@@ -5,7 +5,8 @@ const jwt = require("jsonwebtoken");
 const config=require("../config/config")
 
 const fetchData = async (req, res) => {
-    const date = (req.body.date ? new Date(req.body.date) : new Date()).toISOString().split('T')[0];
+    const date = req.body.date ? req.body.date : new Date().toISOString().split('T')[0];
+
     console.log(date);
   
     const basicValueQuery = `SELECT SUM(BasicValue) as basictotal 
@@ -35,10 +36,29 @@ const fetchData = async (req, res) => {
       const grnValueResult = await request.query(grnValueQuery);
       const POTotalResult = await request.query(POTotalQuery);
   
+      // const response = {
+      //   basicValue: parseFloat(basicValueResult.recordset[0].basictotal.toFixed(2)),
+      //   grnValue: parseFloat(grnValueResult.recordset[0].grnValue.toFixed(2)),
+      //   POTotal: parseFloat(POTotalResult.recordset[0].POTotal.toFixed(2)),
+      // };
+      let basicValue=0;
+      let grnValue=0;
+      let POTotal=0;
+      if(basicValueResult.basictotal){
+        basicValue=parseFloat(basicValueResult.recordset[0].basictotal.toFixed(2))
+      }
+      if(grnValueResult.grnValue){
+        grnValue=parseFloat(grnValueResult.recordset[0].grnValue.toFixed(2))
+      }
+      if(POTotalResult.POTotal){
+        POTotal=parseFloat(POTotalResult.recordset[0].POTotal.toFixed(2))
+      }
+    
+
       const response = {
-        basicValue: parseFloat(basicValueResult.recordset[0].basictotal.toFixed(2)),
-        grnValue: parseFloat(grnValueResult.recordset[0].grnValue.toFixed(2)),
-        POTotal: parseFloat(POTotalResult.recordset[0].POTotal.toFixed(2)),
+        basicValue: basicValue,
+        grnValue: grnValue,
+        POTotal: POTotal,
       };
   
     //   res.send(JSON.stringify(response, null, 2));
