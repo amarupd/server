@@ -5,6 +5,9 @@ const router=require('express').Router()
 
 router.get("/fetchData",dailyController.fetchData)
 
+router.get("/basicvalue",dailyController.BasicValue)
+
+
 
 
 

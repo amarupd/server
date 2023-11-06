@@ -71,7 +71,30 @@ const fetchData = async (req, res) => {
     }
   };
 
+  const BasicValue = async (req, res) => {
+    const date = req.body.date ? req.body.date : new Date().toISOString().split('T')[0];
+
+    const querry = `Select custcode, custname, invdate1, invoiceno1, sum(BasicValue) as basictotal
+    from Invoice I inner join Customer c on c.custid = I.CustID inner join Sales_CustType ct on ct.CTypeID = C.CTypeID
+    Where  I.InvDate1 = '${date}'
+    group by custcode, custname, invoiceno1,invdate1
+    order by CustCode,InvoiceNo1`;
+  
+    try {
+      await sql.connect(config); // Wait for the database connection to be established
+      let request = new sql.Request();
+      const data = await request.query(querry); // Wait for the query to complete
+      res.send(data.recordset); // Assuming you want to send the query result as a response
+    } catch (err) {
+      console.error(err);
+      res.status(500).send({
+        message: err.message || "Some error occurred while retrieving data.",
+      });
+    }
+  };
+
   module.exports = {
-    fetchData
+    fetchData,
+    BasicValue
 }
   
