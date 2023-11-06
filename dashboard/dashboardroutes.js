@@ -7,6 +7,8 @@ router.get("/fetchData",dailyController.fetchData)
 
 router.get("/basicvalue",dailyController.BasicValue)
 
+router.get("/basicValuerange",dailyController.BasicValuerange)
+
 
 
 
