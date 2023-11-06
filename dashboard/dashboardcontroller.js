@@ -44,13 +44,13 @@ const fetchData = async (req, res) => {
       let basicValue=0;
       let grnValue=0;
       let POTotal=0;
-      if(basicValueResult.basictotal){
+      if(basicValueResult.recordset[0].basictotal){
         basicValue=parseFloat(basicValueResult.recordset[0].basictotal.toFixed(2))
       }
-      if(grnValueResult.grnValue){
+      if(grnValueResult.recordset[0].grnValue){
         grnValue=parseFloat(grnValueResult.recordset[0].grnValue.toFixed(2))
       }
-      if(POTotalResult.POTotal){
+      if(POTotalResult.recordset[0].POTotal){
         POTotal=parseFloat(POTotalResult.recordset[0].POTotal.toFixed(2))
       }
     

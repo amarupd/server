@@ -6,7 +6,7 @@ const config = {
     // server:'erpsvr',
     // server:'DESKTOP-U57CKVJ',
     // server:'192.168.2.2',
-    // server:"192.168.255.219",
+    // server:"136.232.69.114",
     // server:"192.168.45.219",
     // sever:"",
     // server:"ERPSRV\\SQLEXPRESS",
