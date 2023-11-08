@@ -17,7 +17,7 @@ const config = {
     port:1433,
     database: 'Icsoft',
     // database: 'AEAPL',
-    // database:'IcSoft',
+    // database:'IcSoft',`
     driver: 'msnodesqlv8',
     options: {
       trustedConnection: true,

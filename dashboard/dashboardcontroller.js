@@ -5,7 +5,7 @@ const jwt = require("jsonwebtoken");
 const config=require("../config/config")
 
 const fetchData = async (req, res) => {
-    const date = req.body.date ? req.body.date : new Date().toISOString().split('T')[0];
+    const date = req.query.date ? req.query.date : new Date().toISOString().split('T')[0];
 
     console.log(date);
   
@@ -72,7 +72,7 @@ const fetchData = async (req, res) => {
   };
 
   const BasicValue = async (req, res) => {
-    const date = req.body.date ? req.body.date : new Date().toISOString().split('T')[0];
+    const date = req.query.date ? req.query.date : new Date().toISOString().split('T')[0];
 
     const querry = `Select custcode, custname, invdate1, invoiceno1, sum(BasicValue) as basictotal
     from Invoice I inner join Customer c on c.custid = I.CustID inner join Sales_CustType ct on ct.CTypeID = C.CTypeID
@@ -94,8 +94,8 @@ const fetchData = async (req, res) => {
   };
 
   const BasicValuerange = async (req, res) => {
-    const date1 = req.body.fromdate ? req.body.fromdate : new Date().toISOString().split('T')[0];
-    const date2 = req.body.todate ? req.body.todate : new Date().toISOString().split('T')[0];
+    const date1 = req.query.fromdate ? req.query.fromdate : new Date().toISOString().split('T')[0];
+    const date2 = req.query.todate ? req.query.todate : new Date().toISOString().split('T')[0];
 
 
     const querry = `Select custcode, custname, invdate1, invoiceno1, sum(BasicValue) as basictotal
