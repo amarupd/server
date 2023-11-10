@@ -1,23 +1,27 @@
+// const data = await fs.readFile('./config.json');
+const configuration=require("../configuration.json")
+// const configuration = JSON.parse(data);
 const config = {
-    server: 'AMAR\\AMARDUTT',
+    // server: 'AMAR\\AMARDUTT',
     // server: "192.168.1.43",
     // server: 'DESKTOP-9PUG3BB',//
     // server:"PIYUSH_SINGH\\PIYUSH",
+    server:`${configuration.server}`,// aeapl
     // server:'erpsvr',
     // server:'DESKTOP-U57CKVJ',
     // server:'192.168.2.2',
-    // server:"136.232.69.114",
     // server:"192.168.45.219",
-    // sever:"",
+    // server:"192.168.0.56",// kipl  ip
     // server:"ERPSRV\\SQLEXPRESS",
-    user:'sa',
-    // password:'R00t@321',
-    password:'amar',
+    user:`${configuration.user}`,
+    password:`${configuration.password}`,
+    // password:"P@ssw0rd", // kipl password
+    // password:'amar',
     // password:"piyush",
-    port:1433,
-    database: 'Icsoft',
+    port:configuration.port,
+    // database: 'Icsoft',
     // database: 'AEAPL',
-    // database:'IcSoft',`
+    database:'IcSoft',
     driver: 'msnodesqlv8',
     options: {
       trustedConnection: true,

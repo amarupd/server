@@ -2,7 +2,7 @@ const sql = require('mssql');
 
 const jwt = require("jsonwebtoken");
 
-const config=require("../config/config")
+const config=require("../config/config");
 
 const search = async (req, res) => {
   const querry = `Select c.CustCode, c.CustName,  e.Enq_Ref_No, e.Date_of_Enquiry, e.Due_Date, 

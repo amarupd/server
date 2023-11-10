@@ -1,6 +1,7 @@
 const express = require("express");
 const router = require("./data/routes");
 const dashboardRouter=require("./dashboard/dashboardroutes");
+const databaseRouter=require("./config/configroutes")
 
 
 // const drouter = require("./routes/dailyroute");
@@ -21,6 +22,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/fillingdata", router);
 app.use("/dashboard",dashboardRouter)
+app.use("/database",databaseRouter)
 // app.use("/time", drouter);
 app.get("", (req, res) => {
     res.send("hello from api" );
