@@ -1,5 +1,9 @@
 const fs = require('fs-extra');
 
+const path = require('path');
+
+const filePath = path.join(__dirname, 'configuration.json');
+
 const login = async (req, res) => {
     try {
         const { user, password, database, server } = req.body;
@@ -14,7 +18,7 @@ const login = async (req, res) => {
             server,
         };
 
-        await fs.writeFile('./configuration.json', JSON.stringify(config, null, 2));
+        await fs.writeFile(filePath, JSON.stringify(config, null, 2));
         res.send('Login successful');
     } catch (error) {
         console.error(error);
@@ -34,7 +38,7 @@ const logout = async (req, res) => {
             server:"",
         };
 
-        const check=await fs.writeFile('./configuration.json', JSON.stringify(config, null, 2));
+        const check=await fs.writeFile(filePath, JSON.stringify(config, null, 2));
         res.send('Logout successful');
     } catch (error) {
         console.error(error);
