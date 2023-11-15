@@ -28,6 +28,6 @@ app.get("", (req, res) => {
     res.send("hello from api" );
 });
 
-app.listen(() => {
+app.listen(port,() => {
     console.log(`server is listening to the port number :- ${port} running on http://localhost:${port}`);
 });
