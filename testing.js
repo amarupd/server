@@ -31,4 +31,5 @@ async function connectDB() {
 connectDB();
 
 // "build": "pkg . --target node18-win-x64",    "msnodesqlv8": "^4.1.0",
+    // "bcrypt": "^5.1.1",
 
