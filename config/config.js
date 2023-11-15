@@ -1,5 +1,5 @@
 // const data = await fs.readFile('./config.json');
-const configuration=require("../configuration.json")
+const configuration=require("./configuration.json")
 // const configuration = JSON.parse(data);
 const config = {
     // server: 'AMAR\\AMARDUTT',
