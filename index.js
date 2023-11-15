@@ -2,6 +2,8 @@ const express = require("express");
 const router = require("./data/routes");
 const dashboardRouter=require("./dashboard/dashboardroutes");
 const databaseRouter=require("./config/configroutes")
+require('dotenv').config()
+// console.log(process.env)
 
 
 // const drouter = require("./routes/dailyroute");
