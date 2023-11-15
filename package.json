@@ -8,7 +8,6 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "pkg . --target node18-win-x64",
     "start": "node index.js"
   },
   "author": "Amar Dutt Upadhyay",

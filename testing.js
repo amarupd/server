@@ -29,3 +29,5 @@ async function connectDB() {
 }
 
 connectDB();
+
+// "build": "pkg . --target node18-win-x64",
