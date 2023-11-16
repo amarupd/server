@@ -1,4 +1,4 @@
-const dailyController=require('../dashboard/dashboardcontroller')
+const dailyController=require('./dashboardcontroller')
 
 const router=require('express').Router()
 
