@@ -8,16 +8,24 @@
     ],
     "routes": [
       {
-        "src": "/fillingdata/(.*)",
-        "dest": "/api/data/$1"
+        "src": "/fillingdata/fill",
+        "dest": "/api/fillingdata/fill"
       },
       {
-        "src": "/dashboard/(.*)",
-        "dest": "/api/dashboard/$1"
+        "src": "/dashboard/basicValuerange",
+        "dest": "/api/dashboard/basicValuerange"
       },
       {
-        "src": "/database/(.*)",
-        "dest": "/api/config/$1"
+        "src": "/dashboard/fetchData",
+        "dest": "/api/dashboard/fetchData"
+      },
+      {
+        "src": "/database/logindb",
+        "dest": "/api/database/logindb"
+      },
+      {
+        "src": "/database/logoutdb",
+        "dest": "/api/database/logoutdb"
       },
       {
         "src": "/(.*)",
