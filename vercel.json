@@ -6,31 +6,6 @@
         "use": "@vercel/node"
       }
     ],
-    "routes": [
-      {
-        "src": "/fillingdata/fill",
-        "dest": "/api/fillingdata/fill"
-      },
-      {
-        "src": "/dashboard/basicValuerange",
-        "dest": "/api/dashboard/basicValuerange"
-      },
-      {
-        "src": "/dashboard/fetchData",
-        "dest": "/api/dashboard/fetchData"
-      },
-      {
-        "src": "/database/logindb",
-        "dest": "/api/database/logindb"
-      },
-      {
-        "src": "/database/logoutdb",
-        "dest": "/api/database/logoutdb"
-      },
-      {
-        "src": "/(.*)",
-        "dest": "/api"
-      }
-    ]
+    "rewrites": [{ "source": "/api/(.*)", "destination": "/api" }]
   }
   

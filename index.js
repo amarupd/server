@@ -1,7 +1,7 @@
 const express = require("express");
-const router = require("./api/data/routes");
-const dashboardRouter=require("./api/dashboard/dashboardroutes");
-const databaseRouter=require("./api/config/configroutes")
+const router = require("./src/data/routes");
+const dashboardRouter=require("./src/dashboard/dashboardroutes");
+const databaseRouter=require("./src/config/configroutes")
 require('dotenv').config()
 // console.log(process.env)
 
