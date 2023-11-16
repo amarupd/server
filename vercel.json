@@ -2,34 +2,26 @@
     "version": 2,
     "builds": [
       {
-        "src": "./index.js",
+        "src": "index.js",
         "use": "@vercel/node"
       }
     ],
     "routes": [
       {
-        "src": "/fillingdata/fill",
-        "dest": "/api/data/fill"
+        "src": "/fillingdata/(.*)",
+        "dest": "/api/data/$1"
       },
       {
-        "src": "/dashboard/basicValuerange",
-        "dest": "/api/dashboard/basicValuerange"
+        "src": "/dashboard/(.*)",
+        "dest": "/api/dashboard/$1"
       },
       {
-        "src": "/dashboard/fetchData",
-        "dest": "/api/dashboard/fetchData"
-      },
-      {
-        "src": "/database/logindb",
-        "dest": "/api/config/logindb"
-      },
-      {
-        "src": "/database/logoutdb",
-        "dest": "/api/config/logoutdb"
+        "src": "/database/(.*)",
+        "dest": "/api/config/$1"
       },
       {
         "src": "/(.*)",
-        "dest": "/"
+        "dest": "/$1"
       }
     ]
   }
