@@ -3,6 +3,7 @@ const sql = require('mssql');
 const jwt = require("jsonwebtoken");
 
 const config=require("../config/config")
+console.log(config);
 
 const fetchData = async (req, res) => {
     const date = req.query.date ? req.query.date : new Date().toISOString().split('T')[0];
