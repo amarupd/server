@@ -6,7 +6,7 @@ const config=require("../config/config");
 
 const search = async (req, res) => {
   const querry = `Select c.CustCode, c.CustName,  e.Enq_Ref_No, e.Date_of_Enquiry, e.Due_Date, 
-  p.InternalPartNo as Itemcode, sc.CategoryName as itemCategory, P.ProdName+'-'+ ep.ItemDescription as Item, g.Gradename, ep.Qty, emp.EmpName    
+  p.InternalPartNo as Itemcode, sc.CategoryName as itemCategory, P.ProdName+'-'+ ep.ItemDescription as Item, g.Gradename, ep.Qty, emp.EmpName
   from enquiry e inner join enquiry_product ep on ep.enquiryid = e.enquiryid
   inner join product p on p.prodid = ep.prodid inner join customer c on c.custid = e.custid 
   inner Join Sales_Category sc on sc.CategoryID  =p.CategoryID

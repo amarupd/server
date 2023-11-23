@@ -9,6 +9,8 @@ router.get("/basicvalue",dailyController.BasicValue)
 
 router.get("/basicValuerange",dailyController.BasicValuerange)
 
+router.get("/searchpo",dailyController.searchPO)
+
 
 
 

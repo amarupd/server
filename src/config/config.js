@@ -18,7 +18,7 @@ const config = {
     // password:"P@ssw0rd", // kipl password
     // password:'amar',
     // password:"piyush",
-    port:configuration.port,
+    port:`${configuration.port}`,
     // database: 'Icsoft',
     // database: 'AEAPL',
     database:'IcSoft',

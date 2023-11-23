@@ -117,9 +117,36 @@ const fetchData = async (req, res) => {
     }
   };
 
+  const searchPO = async (req, res) => {
+    const querry = `Select d.PoId, d.PoNo, d.PoDate, d.Addnlparameter, SupName + ' | ' + SupCode As gStrSupplierDisp, RawMatCode + ' | ' + RawMatName 
+    As gStrMatDisp, GCode + ' | ' + Gradename As gStrGradeDisp, d.Ord_Qty, d.Uom, round(d.Rate, 4) as Rate, 
+    d.CurrCode as Currency, ((d.Rate * d.ExRate + Pack) - Discount) as price, round((d.Ord_Qty * ((d.Rate + d.pack) - Discount)), 2) as povalue, d.RawMatId, 
+    d.ProdName, d.ProdId, A.Minlimit, A.Maxlimit, d.TotalPoValue, d.CurrID, CharVals, D.EMPNAME AS POCreatedBY, d.HSNID, GH.HSNCode 
+    From Invent_PoDetails_Query d Left Outer Join GST_HSN_SAC_NO GH on GH.Hsn_Sac_ID = D.HSNID Inner Join (Select Distinct PS.Empid, poid, Minlimit, Maxlimit From Invent_POApprovalLevels PE (Nolock) 
+    Inner Join Invent_POApprovalEmpLevel PS (Nolock) on PE.levelid = PS.Levelid Inner Join Invent_PoDetails_Query P on P.GTotal = 0 and PE.Locationid = 1 
+    or (Case when PE.IsBasic = 'N' then (P.GTotal + (Select isnull(Sum(Amount), 0) From Invent_PoprodWiseTax T Where T.poid = P.Poid)) else P.GTotal End * P.Exrate 
+    <= PE.Maxlimit) and (Case when PE.IsBasic = 'N' then(P.GTotal + (Select isnull(Sum(Amount), 0) From Invent_PoprodWiseTax T Where T.poid = P.Poid)) else P.GTotal End * P.Exrate 
+    >= PE.Minlimit) Where postatus in ('Approval Pending') and PS.Empid = 1 and PE.POType = P.AddnlParameter and PE.Locationid = 1 
+    and PE.Levelid Not In (Select  Distinct Levelid From Invent_POApprovedEmployee A Where A.Poid = P.POiD and A.Levelid = PE.Levelid and PE.Locationid = 1) 
+    and  1=1 ) A on A.poid = d.poid  and Addnlparameter='General Purchase' and  1=1 and D.locationid = 1 and PoStatus = 'Approval Pending' Order By PoPurTypeId, PoDate, 
+    PoNo, PoProductId`;
+  
+    try {
+      await sql.connect(config); // Wait for the database connection to be established
+      let request = new sql.Request();
+      const data = await request.query(querry); // Wait for the query to complete
+      res.send(data.recordset); // Assuming you want to send the query result as a response
+    } catch (err) {
+      console.error(err);
+      res.status(500).send({
+        message: err.message || "Some error occurred while retrieving data.",
+      });
+    }
+  };
   module.exports = {
     fetchData,
     BasicValue,
-    BasicValuerange
+    BasicValuerange,
+    searchPO
 }
   
