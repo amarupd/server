@@ -34,3 +34,15 @@ const search = async (req, res) => {
 };
 
 search();
+
+
+
+
+
+// {
+//   "user": "sa",
+//   "password": "piyush",
+//   "database": "OEPL",
+//   "port": 1433,
+//   "server": "PIYUSH_SINGH\\PIYUSH"
+// }

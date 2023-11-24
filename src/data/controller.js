@@ -120,7 +120,7 @@ const USER_LOGIN = async (req, res, next) => {
         const { email, password } = req.body;
         const EMAIL= 'vivek@sidtech.net'
         const PASSWORD= 'vivek';
-        const NAME = 'Super Admin'
+        const NAME = 'Vivek Singh'
         const ID="65047d04c8c3f02754fb9737"
         const JWT_SECRET = 'vivek'
 
