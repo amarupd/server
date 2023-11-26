@@ -123,6 +123,10 @@ const USER_LOGIN = async (req, res, next) => {
         const NAME = 'Vivek Singh'
         const ID="65047d04c8c3f02754fb9737"
         const JWT_SECRET = 'vivek'
+        // const Data={
+        //   EMAIL:"amar@admin.com",
+        //   password:"vivek"
+        // }
 
         // Logic for Super Admin
         if (EMAIL === email && PASSWORD === password) {

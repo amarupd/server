@@ -12,7 +12,7 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 var corOption = {
-    origin: ["https://vikrant-dashboard-1.vercel.app","https://sidtech.vercel.app", "http://localhost:5173","https://vikranta-dashboard-new.vercel.app", ,"http://127.0.0.1:5173"]
+    origin: ["https://sidtech.vercel.app","http://127.0.0.1:5173"]
 };
 
 
