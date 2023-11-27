@@ -9,7 +9,7 @@ require('dotenv').config()
 // const drouter = require("./routes/dailyroute");
 const cors = require("cors");
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 5001;
 
 var corOption = {
     origin: ["https://sidtech.vercel.app","http://127.0.0.1:5173"]
