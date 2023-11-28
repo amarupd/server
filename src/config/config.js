@@ -1,5 +1,6 @@
 // const data = await fs.readFile('./config.json');
 const configuration=require("./configuration.json")
+const port=configuration.port
 // const configuration = JSON.parse(data);
 const config = {
     // server: 'AMAR\\AMARDUTT',
@@ -18,7 +19,7 @@ const config = {
     // password:"P@ssw0rd", // kipl password
     // password:'amar',
     // password:"piyush",
-    port:`${configuration.port}`,
+    port:port,
     // database: 'Icsoft',
     // database: 'AEAPL',
     database:`${configuration.database}`,
