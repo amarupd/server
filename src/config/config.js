@@ -3,26 +3,26 @@ const configuration=require("./configuration.json")
 const port=configuration.port
 // const configuration = JSON.parse(data);
 const config = {
-    // server: 'AMAR\\AMARDUTT',
+    server: 'AMAR\\AMARDUTT',
     // server: "192.168.1.43",
     // server: 'DESKTOP-9PUG3BB',//
     // server:"PIYUSH_SINGH\\PIYUSH",
-    server:`${configuration.server}`,// aeapl
+    // server:`${configuration.server}`,// aeapl
     // server:'erpsvr',
     // server:'DESKTOP-U57CKVJ',
     // server:'192.168.2.2',
     // server:"192.168.45.219",
     // server:"192.168.0.56",// kipl  ip
     // server:"ERPSRV\\SQLEXPRESS",
-    user:`${configuration.user}`,
-    password:`${configuration.password}`,
+    user:"sa",//`${configuration.user}`,
+    // password:`${configuration.password}`,
     // password:"P@ssw0rd", // kipl password
-    // password:'amar',
+    password:'amar',
     // password:"piyush",
     port:port,
-    // database: 'Icsoft',
+    database: 'Icsoft',
     // database: 'AEAPL',
-    database:`${configuration.database}`,
+    // database:`${configuration.database}`,
     driver: 'msnodesqlv8',
     options: {
       trustedConnection: true,

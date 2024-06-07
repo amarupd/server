@@ -150,6 +150,8 @@ const sales_details = async (req, res) => {
 
   console.log(date);
 
+  const type = req.query.type
+
   const querry = `select MonthSales,  TransactionNumber, TransactionDate, BillNo, '' as Qty, Amount, Name from (
 -----Current Month Sales
 Select 'Current Month Sales' as MonthSales ,ah.AccountName, t.TransactionNumber, t.TransactionDate ,t.BillNo, Sum(Case When t.Drcr = 'Cr' then Amount else -Amount end) as Amount, p.Name
@@ -186,7 +188,7 @@ on p.TransactionNumber = t.TransactionNumber
  and t.Edited<>'D' and t.Approved = 'Y'
  Group By ah.AccountName, t.TransactionNumber,t.TransactionDate , t.BillNo, p.Name ) v
 ----filter on Type
-where [@ v.MonthSales in ('{Type}')@]
+where [@ v.MonthSales in ('${type}')@]
 order by TransactionDate
 `;
 
