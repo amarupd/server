@@ -3,8 +3,8 @@ const sql = require('mssql');
 const config = {
   user: 'sa',
   password: 'amar',
-//   server: 'AMAR\\AMARDUTT', // Use the IP address of your local server
-server:"192.168.1.42",
+  server: 'AMAR\\AMARDUTT', // Use the IP address of your local server
+// server:"192.168.1.42",
   database: 'Icsoft',
   port: 1433, // Use the port you configured in SQL Server
   options: {
