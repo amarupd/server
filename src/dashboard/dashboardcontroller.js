@@ -155,9 +155,9 @@ const sales_details = async (req, res) => {
   const querry = `select MonthSales,  TransactionNumber, TransactionDate, BillNo, '' as Qty, Amount, Name from (
 -----Current Month Sales
 Select 'Current Month Sales' as MonthSales ,ah.AccountName, t.TransactionNumber, t.TransactionDate ,t.BillNo, Sum(Case When t.Drcr = 'Cr' then Amount else -Amount end) as Amount, p.Name
-from icsoftledger.dbo.Transactions t inner join icsoftledger.dbo.accounts a on a.ID = t.accountid 
-inner join icsoftledger.dbo.accountheads ah on ah.AccountID = a.accountid left outer join (
-Select a.Name, a.AccountCode, t1.TransactionNumber from icsoftledger.dbo.Transactions t1 inner join IcSoftledger.dbo.accounts a on a.ID = t1.AccountID Where OLevelID in (2,6) 
+from IcSoftLedger.dbo.Transactions t inner join IcSoftLedger.dbo.accounts a on a.ID = t.accountid 
+inner join IcSoftLedger.dbo.accountheads ah on ah.AccountID = a.accountid left outer join (
+Select a.Name, a.AccountCode, t1.TransactionNumber from IcSoftLedger.dbo.Transactions t1 inner join IcSoftLedger.dbo.accounts a on a.ID = t1.AccountID Where OLevelID in (2,6) 
  and  Month(t1.transactiondate) = month('${date}') and   Year(t1.transactiondate) = Year(Dateadd(YY,0,'${date}')) ) p
 on p.TransactionNumber = t.TransactionNumber
  Where ah.AccountTypeID = 4  and Month(t.transactiondate) = month('${date}') and   Year(t.transactiondate) = Year(Dateadd(YY,0,'${date}'))
@@ -166,9 +166,9 @@ on p.TransactionNumber = t.TransactionNumber
  Union All
  -----Current Month Sales Prev. year
 Select 'Current Month Sales Pre. Year' as MonthSales ,ah.AccountName, t.TransactionNumber, t.TransactionDate ,t.BillNo, Sum(Case When t.Drcr = 'Cr' then Amount else -Amount end) as Amount, p.Name
-from icsoftledger.dbo.Transactions t inner join icsoftledger.dbo.accounts a on a.ID = t.accountid 
-inner join icsoftledger.dbo.accountheads ah on ah.AccountID = a.accountid left outer join (
-Select a.Name, a.AccountCode, t1.TransactionNumber from icsoftledger.dbo.Transactions t1 inner join IcSoftledger.dbo.accounts a on a.ID = t1.AccountID Where OLevelID in (2,6) 
+from IcSoftLedger.dbo.Transactions t inner join IcSoftLedger.dbo.accounts a on a.ID = t.accountid 
+inner join IcSoftLedger.dbo.accountheads ah on ah.AccountID = a.accountid left outer join (
+Select a.Name, a.AccountCode, t1.TransactionNumber from IcSoftLedger.dbo.Transactions t1 inner join IcSoftLedger.dbo.accounts a on a.ID = t1.AccountID Where OLevelID in (2,6) 
  and  Month(t1.transactiondate) = month('${date}') and   Year(t1.transactiondate) = Year(Dateadd(YY,-1,'${date}')) ) p
 on p.TransactionNumber = t.TransactionNumber
  Where ah.AccountTypeID = 4  and Month(t.transactiondate) = month('${date}') and   Year(t.transactiondate) = Year(Dateadd(YY,-1,'${date}'))
@@ -177,20 +177,22 @@ on p.TransactionNumber = t.TransactionNumber
  Union All
  -----Current Quarter Sales
 Select 'Current Quarter Sales Pre. Year' as MonthSales ,ah.AccountName, t.TransactionNumber, t.TransactionDate ,t.BillNo, Sum(Case When t.Drcr = 'Cr' then Amount else -Amount end) as Amount, p.Name
-from icsoftledger.dbo.Transactions t inner join icsoftledger.dbo.accounts a on a.ID = t.accountid 
-inner join icsoftledger.dbo.accountheads ah on ah.AccountID = a.accountid left outer join (
-Select a.Name, a.AccountCode, t1.TransactionNumber from icsoftledger.dbo.Transactions t1 inner join IcSoftledger.dbo.accounts a on a.ID = t1.AccountID Where OLevelID in (2,6) 
+from IcSoftLedger.dbo.Transactions t inner join IcSoftLedger.dbo.accounts a on a.ID = t.accountid 
+inner join IcSoftLedger.dbo.accountheads ah on ah.AccountID = a.accountid left outer join (
+Select a.Name, a.AccountCode, t1.TransactionNumber from IcSoftLedger.dbo.Transactions t1 inner join IcSoftLedger.dbo.accounts a on a.ID = t1.AccountID Where OLevelID in (2,6) 
  and (Select Quarter+'-'+yearname from icSoft.dbo.ST_FinancialYear Where t1.TransactionDate between fromdate and ToDate ) =
  (Select Quarter+'-'+yearname from icSoft.dbo.ST_FinancialYear Where '${date}' between fromdate and ToDate ) ) p
 on p.TransactionNumber = t.TransactionNumber
  Where ah.AccountTypeID = 4  and (Select Quarter+'-'+yearname from icSoft.dbo.ST_FinancialYear Where t.TransactionDate between fromdate and ToDate ) =
- (Select Quarter+'-'+yearname from icSoft.dbo.ST_FinancialYear Where [@ ('${date}') @] between fromdate and ToDate )
+ (Select Quarter+'-'+yearname from icSoft.dbo.ST_FinancialYear Where ('${date}')  between fromdate and ToDate )
  and t.Edited<>'D' and t.Approved = 'Y'
  Group By ah.AccountName, t.TransactionNumber,t.TransactionDate , t.BillNo, p.Name ) v
 ----filter on Type
-where [@ v.MonthSales in ('${type}')@]
+--where v.MonthSales in ('${type}')
 order by TransactionDate
 `;
+
+console.log(querry);
 
   try {
     await sql.connect(config); // Wait for the database connection to be established
@@ -235,8 +237,11 @@ left outer join Enquiry_Product ep on qp.EnquiryProdID = ep.EnquiryProdID
  left outer join PartyDetail pd on pd.PartyID = en.Custid
  where Price_Unit = 0 and QuotDate > '01-Apr-2023' ) v
  ----filter on Type 
- where v.type = '${type}'
+ --where v.type = '${type}'
 `;
+
+console.log(querry);
+
 
   try {
     await sql.connect(config); // Wait for the database connection to be established
@@ -294,7 +299,10 @@ left outer join Enquiry_Product ep on ep.EnquiryID = en.EnquiryID
 left outer join PartyDetail pd on pd.PartyID = en.Custid
 	where Date_of_Enquiry >= DATEADD(Year, -1, GETDATE()) and  enquirysentstatus = 'History' ) k
 ---filter on Type
-where k.Type = '${type}'`;
+--where k.Type = '${type}'`;
+
+console.log(querry);
+
 
   try {
     await sql.connect(config); // Wait for the database connection to be established
@@ -323,7 +331,10 @@ Union All
  Select 'Due in Next One Month SalesOrders' as Type, IntPONo, SOEntryDate, PONo, OrderQty, OrdValue, CustShort
  from ST_PendingSalesOrderdetail Where intDelDate between Getdate() and Dateadd(dd,30,Getdate()) ) s
  ---
- where s.Type = '${type}'`;
+ --where s.Type = '${type}'`;
+
+ console.log(querry);
+
 
   try {
     await sql.connect(config); // Wait for the database connection to be established
@@ -405,7 +416,9 @@ left outer join ST_SupplyCondition sc on sc.SCID = rmadn.[Supply Condition]
 Where (Select yearname from icSoft.dbo.ST_FinancialYear Where Convert(Date,po.Created_Date,11) between fromdate and ToDate ) =
  (Select yearname from icSoft.dbo.ST_FinancialYear Where Dateadd(YY,-1,'01-Apr-24') between fromdate and ToDate ) ) p
  ---filter on Type
- where [@ p.type = '${type}'@]`;
+ --where p.type = '${type}'`;
+
+ console.log(querry);
 
   try {
     await sql.connect(config); // Wait for the database connection to be established
@@ -430,15 +443,15 @@ Round(Sum(PYSales)/100000,2) as PYSales
  from ( -----Current Month Sales
 Select ah.AccountName, Sum(Case When t.Drcr = 'Cr' then Amount else -Amount end) as CM_Sales, 0 as PCMSales, 0 as CQSales, 0 PQSales, 0 as CYSales,
 0 PYSales  
-from icsoftledger.dbo.Transactions t inner join icsoftledger.dbo.accounts a on a.ID = t.accountid inner join icsoftledger.dbo.accountheads ah on ah.AccountID = a.accountid
+from IcSoftLedger.dbo.Transactions t inner join IcSoftLedger.dbo.accounts a on a.ID = t.accountid inner join IcSoftLedger.dbo.accountheads ah on ah.AccountID = a.accountid
  Where ah.AccountTypeID = 4 
- and Month(t.transactiondate) = month([@ '${date}' @]) and   Year(t.transactiondate) = Year(Dateadd(YY,0,'${date}'))
+ and Month(t.transactiondate) = month('${date}') and   Year(t.transactiondate) = Year(Dateadd(YY,0,'${date}'))
  Group By Ah.AccountName
  Union All
  ----- Prev year Current Month Sales
  Select ah.AccountName, 0 as CMSales, Sum(Case When t.Drcr = 'Cr' then Amount else -Amount end) as PCMSales, 0 as CQSales, 0 PQSales, 0 as CYSales,
 0 PYSales  
-from icsoftledger.dbo.Transactions t inner join icsoftledger.dbo.accounts a on a.ID = t.accountid inner join icsoftledger.dbo.accountheads ah on ah.AccountID = a.accountid
+from IcSoftLedger.dbo.Transactions t inner join IcSoftLedger.dbo.accounts a on a.ID = t.accountid inner join IcSoftLedger.dbo.accountheads ah on ah.AccountID = a.accountid
  Where ah.AccountTypeID = 4 -----and t.transactiondate between '01-Apr-24' and '30-Apr-24'
  and Month(t.transactiondate) = month('${date}') and   Year(t.transactiondate) = Year(Dateadd(YY,-1,'${date}'))
  Group By Ah.AccountName
@@ -446,7 +459,7 @@ from icsoftledger.dbo.Transactions t inner join icsoftledger.dbo.accounts a on a
  ----Current Quarter Sales 
   Select ah.AccountName, 0 as CMSales, 0 as PCMSales, Sum(Case When t.Drcr = 'Cr' then Amount else -Amount end) as CQSales, 0 PQSales, 0 as CYSales,
 0 PYSales  
-from icsoftledger.dbo.Transactions t inner join icsoftledger.dbo.accounts a on a.ID = t.accountid inner join icsoftledger.dbo.accountheads ah on ah.AccountID = a.accountid
+from IcSoftLedger.dbo.Transactions t inner join IcSoftLedger.dbo.accounts a on a.ID = t.accountid inner join IcSoftLedger.dbo.accountheads ah on ah.AccountID = a.accountid
  Where ah.AccountTypeID = 4 -----and t.transactiondate between '01-Apr-24' and '30-Apr-24'
   and (Select Quarter+'-'+yearname from icSoft.dbo.ST_FinancialYear Where t.TransactionDate between fromdate and ToDate ) =
  (Select Quarter+'-'+yearname from icSoft.dbo.ST_FinancialYear Where '${date}' between fromdate and ToDate )
@@ -455,7 +468,7 @@ from icsoftledger.dbo.Transactions t inner join icsoftledger.dbo.accounts a on a
  ---Pre Year Quarter sales
  Select ah.AccountName, 0 as CMSales, 0 as PCMSales, 0 as CQSales, Sum(Case When t.Drcr = 'Cr' then Amount else -Amount end) PQSales, 0 as CYSales,
 0 PYSales  
-from icsoftledger.dbo.Transactions t inner join icsoftledger.dbo.accounts a on a.ID = t.accountid inner join icsoftledger.dbo.accountheads ah on ah.AccountID = a.accountid
+from IcSoftLedger.dbo.Transactions t inner join IcSoftLedger.dbo.accounts a on a.ID = t.accountid inner join IcSoftLedger.dbo.accountheads ah on ah.AccountID = a.accountid
  Where ah.AccountTypeID = 4 -----and t.transactiondate between '01-Apr-24' and '30-Apr-24'
   and (Select Quarter+'-'+yearname from icSoft.dbo.ST_FinancialYear Where t.TransactionDate between fromdate and ToDate ) =
  (Select Quarter+'-'+yearname from icSoft.dbo.ST_FinancialYear Where Dateadd(YY,-1,'${date}') between fromdate and ToDate )
@@ -464,7 +477,7 @@ from icsoftledger.dbo.Transactions t inner join icsoftledger.dbo.accounts a on a
  ---Current Year sales
  Select ah.AccountName, 0 as CMSales, 0 as PCMSales, 0 as CQSales, 0 PQSales, Sum(Case When t.Drcr = 'Cr' then Amount else -Amount end) as CYSales,
 0 PYSales  
-from icsoftledger.dbo.Transactions t inner join icsoftledger.dbo.accounts a on a.ID = t.accountid inner join icsoftledger.dbo.accountheads ah on ah.AccountID = a.accountid
+from IcSoftLedger.dbo.Transactions t inner join IcSoftLedger.dbo.accounts a on a.ID = t.accountid inner join IcSoftLedger.dbo.accountheads ah on ah.AccountID = a.accountid
  Where ah.AccountTypeID = 4 -----and t.transactiondate between '01-Apr-24' and '30-Apr-24'
   and (Select yearname from icSoft.dbo.ST_FinancialYear Where t.TransactionDate between fromdate and ToDate ) =
  (Select yearname from icSoft.dbo.ST_FinancialYear Where '${date}' between fromdate and ToDate )
@@ -474,7 +487,7 @@ from icsoftledger.dbo.Transactions t inner join icsoftledger.dbo.accounts a on a
  ---Pre Year sales
  Select ah.AccountName, 0 as CMSales, 0 as PCMSales, 0 as CQSales, 0 PQSales, 0 as CYSales,
 Sum(Case When t.Drcr = 'Cr' then Amount else -Amount end) PYSales  
-from icsoftledger.dbo.Transactions t inner join icsoftledger.dbo.accounts a on a.ID = t.accountid inner join icsoftledger.dbo.accountheads ah on ah.AccountID = a.accountid
+from IcSoftLedger.dbo.Transactions t inner join IcSoftLedger.dbo.accounts a on a.ID = t.accountid inner join IcSoftLedger.dbo.accountheads ah on ah.AccountID = a.accountid
  Where ah.AccountTypeID = 4 -----and t.transactiondate between '01-Apr-24' and '30-Apr-24'
   and (Select yearname from icSoft.dbo.ST_FinancialYear Where t.TransactionDate between fromdate and ToDate ) =
  (Select yearname from icSoft.dbo.ST_FinancialYear Where Dateadd(YY,-1,'${date}') between fromdate and ToDate )
@@ -482,6 +495,9 @@ from icsoftledger.dbo.Transactions t inner join icsoftledger.dbo.accounts a on a
   ) t1
  group By AccountName
 `;
+
+console.log(querry);
+
 
   try {
     await sql.connect(config); // Wait for the database connection to be established
@@ -526,6 +542,7 @@ Union All
  from ST_PendingSalesOrderdetail
  ) t
 `;
+console.log(querry);
 
   try {
     await sql.connect(config); // Wait for the database connection to be established
@@ -612,6 +629,9 @@ Where (Select yearname from icSoft.dbo.ST_FinancialYear Where Convert(Date,po.Cr
  (Select yearname from icSoft.dbo.ST_FinancialYear Where Dateadd(YY,-1,'${date}') between fromdate and ToDate )) v
 `;
 
+console.log(querry);
+
+
   try {
     await sql.connect(config); // Wait for the database connection to be established
     let request = new sql.Request();
@@ -645,6 +665,9 @@ from quotation_Product qp inner join quotations q on qp.QuotID = q.QuotID
  where Price_Unit = 0 and QuotDate > '${date}' ) v
 `;
 
+console.log(querry);
+
+
   try {
     await sql.connect(config); // Wait for the database connection to be established
     let request = new sql.Request();
@@ -675,6 +698,9 @@ const enquiry_summary = async (req, res) => {
 	   count(case when Date_of_Enquiry >= DATEADD(Year, -1, '${date}') and  enquirysentstatus = 'History'then IntEnqRefNo end) as RejLastoneYear
 	    from enquiry
 `;
+
+console.log(querry);
+
 
   try {
     await sql.connect(config); // Wait for the database connection to be established
