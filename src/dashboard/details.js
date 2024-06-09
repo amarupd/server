@@ -143,8 +143,8 @@ const sales_details = async (req, res) => {
       OFFSET ${offset} ROWS FETCH NEXT ${limit} ROWS ONLY
     `;
   
-    console.log(date);
-    console.log(querry);
+    // console.log(date);
+    // console.log(querry);
   
     try {
       await sql.connect(config);
@@ -260,8 +260,8 @@ const quatation_details = async (req, res) => {
       OFFSET ${offset} ROWS FETCH NEXT ${limit} ROWS ONLY
     `;
   
-    console.log(type);
-    console.log(query);
+    // console.log(type);
+    // console.log(query);
   
     try {
       await sql.connect(config); // Wait for the database connection to be established
@@ -276,187 +276,480 @@ const quatation_details = async (req, res) => {
     }
   };
   
+// const enquiry_details = async (req, res) => {
+//   const type = req.query.type
+//   const querry = `select Type, IntEnqRefNo, Date_of_Enquiry, Enq_Ref_No, Qty, '' as Amount, Name from (
+// select 'Today Enquiry' as Type, en.IntEnqRefNo, Date_of_Enquiry, en.Enq_Ref_No, ep.Qty, pd.Name from enquiry en
+// left outer join Enquiry_Product ep on ep.EnquiryID = en.EnquiryID
+// left outer join PartyDetail pd on pd.PartyID = en.Custid
+// 	where Date_of_Enquiry = GETDATE()
+// UNION ALL
+// select 'Last Week Enquiry' as Type, en.IntEnqRefNo, Date_of_Enquiry, en.Enq_Ref_No, ep.Qty, pd.Name from enquiry en
+// left outer join Enquiry_Product ep on ep.EnquiryID = en.EnquiryID
+// left outer join PartyDetail pd on pd.PartyID = en.Custid
+// 	where Date_of_Enquiry >= DATEADD(week, -1, GETDATE())
+// UNION ALL
+// select 'Last Month Enquiry' as Type, en.IntEnqRefNo, Date_of_Enquiry, en.Enq_Ref_No, ep.Qty, pd.Name from enquiry en
+// left outer join Enquiry_Product ep on ep.EnquiryID = en.EnquiryID
+// left outer join PartyDetail pd on pd.PartyID = en.Custid
+// 	where Date_of_Enquiry >= DATEADD(month, -1, GETDATE())
+// UNION ALL
+// select 'Last Year Enquiry' as Type, en.IntEnqRefNo, Date_of_Enquiry, en.Enq_Ref_No, ep.Qty, pd.Name from enquiry en
+// left outer join Enquiry_Product ep on ep.EnquiryID = en.EnquiryID
+// left outer join PartyDetail pd on pd.PartyID = en.Custid
+// 	where Date_of_Enquiry >= DATEADD(month, -1, GETDATE())
+// UNION ALL
+// select 'Today Rej Enquiry' as Type, en.IntEnqRefNo, Date_of_Enquiry, en.Enq_Ref_No, ep.Qty, pd.Name from enquiry en
+// left outer join Enquiry_Product ep on ep.EnquiryID = en.EnquiryID
+// left outer join PartyDetail pd on pd.PartyID = en.Custid
+// 	where Date_of_Enquiry = GETDATE() and  enquirysentstatus = 'Hisotry'
+// UNION ALL
+// select 'LastWeek Rej Enquiry' as Type, en.IntEnqRefNo, Date_of_Enquiry, en.Enq_Ref_No, ep.Qty, pd.Name from enquiry en
+// left outer join Enquiry_Product ep on ep.EnquiryID = en.EnquiryID
+// left outer join PartyDetail pd on pd.PartyID = en.Custid
+// 	where Date_of_Enquiry >= DATEADD(week, -1, GETDATE()) and  enquirysentstatus = 'History'
+// UNION ALL
+// select 'LastMonth Rej Enquiry' as Type, en.IntEnqRefNo, Date_of_Enquiry, en.Enq_Ref_No, ep.Qty, pd.Name from enquiry en
+// left outer join Enquiry_Product ep on ep.EnquiryID = en.EnquiryID
+// left outer join PartyDetail pd on pd.PartyID = en.Custid
+// 	where Date_of_Enquiry >= DATEADD(month, -1, GETDATE()) and  enquirysentstatus = 'History'
+// UNION ALL
+// select 'LastYear Rej Enquiry' as Type, en.IntEnqRefNo, Date_of_Enquiry, en.Enq_Ref_No, ep.Qty, pd.Name from enquiry en
+// left outer join Enquiry_Product ep on ep.EnquiryID = en.EnquiryID
+// left outer join PartyDetail pd on pd.PartyID = en.Custid
+// 	where Date_of_Enquiry >= DATEADD(Year, -1, GETDATE()) and  enquirysentstatus = 'History' ) k
+// ---filter on Type
+// --where k.Type = '${type}'`;
+
+// console.log(querry);
+
+
+//   try {
+//     await sql.connect(config); // Wait for the database connection to be established
+//     let request = new sql.Request();
+//     const data = await request.query(querry); // Wait for the query to complete
+//     res.send(data.recordset); // Assuming you want to send the query result as a response
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).send({
+//       message: err.message || "Some error occurred while retrieving data.",
+//     });
+//   }
+// };
+
 const enquiry_details = async (req, res) => {
-  const type = req.query.type
-  const querry = `select Type, IntEnqRefNo, Date_of_Enquiry, Enq_Ref_No, Qty, '' as Amount, Name from (
-select 'Today Enquiry' as Type, en.IntEnqRefNo, Date_of_Enquiry, en.Enq_Ref_No, ep.Qty, pd.Name from enquiry en
-left outer join Enquiry_Product ep on ep.EnquiryID = en.EnquiryID
-left outer join PartyDetail pd on pd.PartyID = en.Custid
-	where Date_of_Enquiry = GETDATE()
-UNION ALL
-select 'Last Week Enquiry' as Type, en.IntEnqRefNo, Date_of_Enquiry, en.Enq_Ref_No, ep.Qty, pd.Name from enquiry en
-left outer join Enquiry_Product ep on ep.EnquiryID = en.EnquiryID
-left outer join PartyDetail pd on pd.PartyID = en.Custid
-	where Date_of_Enquiry >= DATEADD(week, -1, GETDATE())
-UNION ALL
-select 'Last Month Enquiry' as Type, en.IntEnqRefNo, Date_of_Enquiry, en.Enq_Ref_No, ep.Qty, pd.Name from enquiry en
-left outer join Enquiry_Product ep on ep.EnquiryID = en.EnquiryID
-left outer join PartyDetail pd on pd.PartyID = en.Custid
-	where Date_of_Enquiry >= DATEADD(month, -1, GETDATE())
-UNION ALL
-select 'Last Year Enquiry' as Type, en.IntEnqRefNo, Date_of_Enquiry, en.Enq_Ref_No, ep.Qty, pd.Name from enquiry en
-left outer join Enquiry_Product ep on ep.EnquiryID = en.EnquiryID
-left outer join PartyDetail pd on pd.PartyID = en.Custid
-	where Date_of_Enquiry >= DATEADD(month, -1, GETDATE())
-UNION ALL
-select 'Today Rej Enquiry' as Type, en.IntEnqRefNo, Date_of_Enquiry, en.Enq_Ref_No, ep.Qty, pd.Name from enquiry en
-left outer join Enquiry_Product ep on ep.EnquiryID = en.EnquiryID
-left outer join PartyDetail pd on pd.PartyID = en.Custid
-	where Date_of_Enquiry = GETDATE() and  enquirysentstatus = 'Hisotry'
-UNION ALL
-select 'LastWeek Rej Enquiry' as Type, en.IntEnqRefNo, Date_of_Enquiry, en.Enq_Ref_No, ep.Qty, pd.Name from enquiry en
-left outer join Enquiry_Product ep on ep.EnquiryID = en.EnquiryID
-left outer join PartyDetail pd on pd.PartyID = en.Custid
-	where Date_of_Enquiry >= DATEADD(week, -1, GETDATE()) and  enquirysentstatus = 'History'
-UNION ALL
-select 'LastMonth Rej Enquiry' as Type, en.IntEnqRefNo, Date_of_Enquiry, en.Enq_Ref_No, ep.Qty, pd.Name from enquiry en
-left outer join Enquiry_Product ep on ep.EnquiryID = en.EnquiryID
-left outer join PartyDetail pd on pd.PartyID = en.Custid
-	where Date_of_Enquiry >= DATEADD(month, -1, GETDATE()) and  enquirysentstatus = 'History'
-UNION ALL
-select 'LastYear Rej Enquiry' as Type, en.IntEnqRefNo, Date_of_Enquiry, en.Enq_Ref_No, ep.Qty, pd.Name from enquiry en
-left outer join Enquiry_Product ep on ep.EnquiryID = en.EnquiryID
-left outer join PartyDetail pd on pd.PartyID = en.Custid
-	where Date_of_Enquiry >= DATEADD(Year, -1, GETDATE()) and  enquirysentstatus = 'History' ) k
----filter on Type
---where k.Type = '${type}'`;
+    const type = req.query.type;
+    const limit = parseInt(req.query.limit, 10) || 10; // default limit to 10 if not provided
+    const offset = parseInt(req.query.offset, 10) || 0; // default offset to 0 if not provided
+  
+    const validTypes = [
+      'Today Enquiry',
+      'Last Week Enquiry',
+      'Last Month Enquiry',
+      'Last Year Enquiry',
+      'Today Rej Enquiry',
+      'LastWeek Rej Enquiry',
+      'LastMonth Rej Enquiry',
+      'LastYear Rej Enquiry'
+    ];
+  
+    const typeFilter = type && validTypes.includes(type) ? `WHERE k.Type = '${type}'` : '';
+  
+    const query = `
+      SELECT Type, IntEnqRefNo, Date_of_Enquiry, Enq_Ref_No, Qty, '' AS Amount, Name
+      FROM (
+        SELECT 'Today Enquiry' AS Type, en.IntEnqRefNo, Date_of_Enquiry, en.Enq_Ref_No, ep.Qty, pd.Name
+        FROM enquiry en
+        LEFT OUTER JOIN Enquiry_Product ep ON ep.EnquiryID = en.EnquiryID
+        LEFT OUTER JOIN PartyDetail pd ON pd.PartyID = en.Custid
+        WHERE Date_of_Enquiry = CONVERT(DATE, GETDATE())
+        
+        UNION ALL
+  
+        SELECT 'Last Week Enquiry' AS Type, en.IntEnqRefNo, Date_of_Enquiry, en.Enq_Ref_No, ep.Qty, pd.Name
+        FROM enquiry en
+        LEFT OUTER JOIN Enquiry_Product ep ON ep.EnquiryID = en.EnquiryID
+        LEFT OUTER JOIN PartyDetail pd ON pd.PartyID = en.Custid
+        WHERE Date_of_Enquiry >= DATEADD(week, -1, GETDATE())
+        
+        UNION ALL
+  
+        SELECT 'Last Month Enquiry' AS Type, en.IntEnqRefNo, Date_of_Enquiry, en.Enq_Ref_No, ep.Qty, pd.Name
+        FROM enquiry en
+        LEFT OUTER JOIN Enquiry_Product ep ON ep.EnquiryID = en.EnquiryID
+        LEFT OUTER JOIN PartyDetail pd ON pd.PartyID = en.Custid
+        WHERE Date_of_Enquiry >= DATEADD(month, -1, GETDATE())
+        
+        UNION ALL
+  
+        SELECT 'Last Year Enquiry' AS Type, en.IntEnqRefNo, Date_of_Enquiry, en.Enq_Ref_No, ep.Qty, pd.Name
+        FROM enquiry en
+        LEFT OUTER JOIN Enquiry_Product ep ON ep.EnquiryID = en.EnquiryID
+        LEFT OUTER JOIN PartyDetail pd ON pd.PartyID = en.Custid
+        WHERE Date_of_Enquiry >= DATEADD(year, -1, GETDATE())
+        
+        UNION ALL
+  
+        SELECT 'Today Rej Enquiry' AS Type, en.IntEnqRefNo, Date_of_Enquiry, en.Enq_Ref_No, ep.Qty, pd.Name
+        FROM enquiry en
+        LEFT OUTER JOIN Enquiry_Product ep ON ep.EnquiryID = en.EnquiryID
+        LEFT OUTER JOIN PartyDetail pd ON pd.PartyID = en.Custid
+        WHERE Date_of_Enquiry = CONVERT(DATE, GETDATE()) AND enquirysentstatus = 'History'
+        
+        UNION ALL
+  
+        SELECT 'LastWeek Rej Enquiry' AS Type, en.IntEnqRefNo, Date_of_Enquiry, en.Enq_Ref_No, ep.Qty, pd.Name
+        FROM enquiry en
+        LEFT OUTER JOIN Enquiry_Product ep ON ep.EnquiryID = en.EnquiryID
+        LEFT OUTER JOIN PartyDetail pd ON pd.PartyID = en.Custid
+        WHERE Date_of_Enquiry >= DATEADD(week, -1, GETDATE()) AND enquirysentstatus = 'History'
+        
+        UNION ALL
+  
+        SELECT 'LastMonth Rej Enquiry' AS Type, en.IntEnqRefNo, Date_of_Enquiry, en.Enq_Ref_No, ep.Qty, pd.Name
+        FROM enquiry en
+        LEFT OUTER JOIN Enquiry_Product ep ON ep.EnquiryID = en.EnquiryID
+        LEFT OUTER JOIN PartyDetail pd ON pd.PartyID = en.Custid
+        WHERE Date_of_Enquiry >= DATEADD(month, -1, GETDATE()) AND enquirysentstatus = 'History'
+        
+        UNION ALL
+  
+        SELECT 'LastYear Rej Enquiry' AS Type, en.IntEnqRefNo, Date_of_Enquiry, en.Enq_Ref_No, ep.Qty, pd.Name
+        FROM enquiry en
+        LEFT OUTER JOIN Enquiry_Product ep ON ep.EnquiryID = en.EnquiryID
+        LEFT OUTER JOIN PartyDetail pd ON pd.PartyID = en.Custid
+        WHERE Date_of_Enquiry >= DATEADD(year, -1, GETDATE()) AND enquirysentstatus = 'History'
+      ) k
+      ${typeFilter}
+      ORDER BY Date_of_Enquiry
+      OFFSET ${offset} ROWS FETCH NEXT ${limit} ROWS ONLY
+    `;
+  
+    // console.log(type);
+    // console.log(query);
+  
+    try {
+      await sql.connect(config); // Wait for the database connection to be established
+      let request = new sql.Request();
+      const data = await request.query(query); // Wait for the query to complete
+      res.send(data.recordset); // Assuming you want to send the query result as a response
+    } catch (err) {
+      console.error(err);
+      res.status(500).send({
+        message: err.message || "Some error occurred while retrieving data.",
+      });
+    }
+  };
+  
+// const due_details = async (req, res) => {
+//   const type = req.query.type
+//   const querry = `select Type, IntPONo, SOEntryDate, PONo, OrderQty, OrdValue, CustShort from (
+// -------Over Due sales Orders
+// Select 'Over Due sales Orders' as Type, IntPONo, SOEntryDate, PONo, OrderQty, OrdValue, CustShort
+//  from ST_PendingSalesOrderdetail Where intDelDate < Getdate()
+// Union All
+//  ------Duein Next 7 Days Sales Orders
+// Select 'Due in Next 7 Days SalesOrders' as Type, IntPONo, SOEntryDate, PONo, OrderQty, OrdValue, CustShort
+//  from ST_PendingSalesOrderdetail Where intDelDate between Getdate() and Dateadd(dd,7,Getdate())
+// Union All
+//  ------Duein Next One Month Days Sales Orders
+//  Select 'Due in Next One Month SalesOrders' as Type, IntPONo, SOEntryDate, PONo, OrderQty, OrdValue, CustShort
+//  from ST_PendingSalesOrderdetail Where intDelDate between Getdate() and Dateadd(dd,30,Getdate()) ) s
+//  ---
+//  --where s.Type = '${type}'`;
 
-console.log(querry);
+//  console.log(querry);
 
 
-  try {
-    await sql.connect(config); // Wait for the database connection to be established
-    let request = new sql.Request();
-    const data = await request.query(querry); // Wait for the query to complete
-    res.send(data.recordset); // Assuming you want to send the query result as a response
-  } catch (err) {
-    console.error(err);
-    res.status(500).send({
-      message: err.message || "Some error occurred while retrieving data.",
-    });
-  }
-};
+//   try {
+//     await sql.connect(config); // Wait for the database connection to be established
+//     let request = new sql.Request();
+//     const data = await request.query(querry); // Wait for the query to complete
+//     res.send(data.recordset); // Assuming you want to send the query result as a response
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).send({
+//       message: err.message || "Some error occurred while retrieving data.",
+//     });
+//   }
+// };
+
 const due_details = async (req, res) => {
-  const type = req.query.type
-  const querry = `select Type, IntPONo, SOEntryDate, PONo, OrderQty, OrdValue, CustShort from (
--------Over Due sales Orders
-Select 'Over Due sales Orders' as Type, IntPONo, SOEntryDate, PONo, OrderQty, OrdValue, CustShort
- from ST_PendingSalesOrderdetail Where intDelDate < Getdate()
-Union All
- ------Duein Next 7 Days Sales Orders
-Select 'Due in Next 7 Days SalesOrders' as Type, IntPONo, SOEntryDate, PONo, OrderQty, OrdValue, CustShort
- from ST_PendingSalesOrderdetail Where intDelDate between Getdate() and Dateadd(dd,7,Getdate())
-Union All
- ------Duein Next One Month Days Sales Orders
- Select 'Due in Next One Month SalesOrders' as Type, IntPONo, SOEntryDate, PONo, OrderQty, OrdValue, CustShort
- from ST_PendingSalesOrderdetail Where intDelDate between Getdate() and Dateadd(dd,30,Getdate()) ) s
- ---
- --where s.Type = '${type}'`;
+    const type = req.query.type;
+    const limit = parseInt(req.query.limit, 10) || 10; // default limit to 10 if not provided
+    const offset = parseInt(req.query.offset, 10) || 0; // default offset to 0 if not provided
+  
+    const validTypes = [
+      'Over Due sales Orders',
+      'Due in Next 7 Days SalesOrders',
+      'Due in Next One Month SalesOrders'
+    ];
+  
+    const typeFilter = type && validTypes.includes(type) ? `WHERE s.Type = '${type}'` : '';
+  
+    const query = `
+      SELECT Type, IntPONo, SOEntryDate, PONo, OrderQty, OrdValue, CustShort
+      FROM (
+        ------- Over Due sales Orders
+        SELECT 'Over Due sales Orders' AS Type, IntPONo, SOEntryDate, PONo, OrderQty, OrdValue, CustShort
+        FROM ST_PendingSalesOrderdetail
+        WHERE intDelDate < GETDATE()
+        
+        UNION ALL
+        
+        ------ Due in Next 7 Days Sales Orders
+        SELECT 'Due in Next 7 Days SalesOrders' AS Type, IntPONo, SOEntryDate, PONo, OrderQty, OrdValue, CustShort
+        FROM ST_PendingSalesOrderdetail
+        WHERE intDelDate BETWEEN GETDATE() AND DATEADD(dd, 7, GETDATE())
+        
+        UNION ALL
+        
+        ------ Due in Next One Month Days Sales Orders
+        SELECT 'Due in Next One Month SalesOrders' AS Type, IntPONo, SOEntryDate, PONo, OrderQty, OrdValue, CustShort
+        FROM ST_PendingSalesOrderdetail
+        WHERE intDelDate BETWEEN GETDATE() AND DATEADD(dd, 30, GETDATE())
+      ) s
+      ${typeFilter}
+      ORDER BY SOEntryDate
+      OFFSET ${offset} ROWS FETCH NEXT ${limit} ROWS ONLY
+    `;
+  
+    // console.log(type);
+    // console.log(query);
+  
+    try {
+      await sql.connect(config); // Wait for the database connection to be established
+      let request = new sql.Request();
+      const data = await request.query(query); // Wait for the query to complete
+      res.send(data.recordset); // Assuming you want to send the query result as a response
+    } catch (err) {
+      console.error(err);
+      res.status(500).send({
+        message: err.message || "Some error occurred while retrieving data.",
+      });
+    }
+  };
+  
+// const order_value_details = async (req, res) => {
+//   const type = req.query.type
+//   const querry = `select Type, IntPONo, SOEntryDate, PONo, Ord_Qty, GTotal, custname from (
+// ---Curr Month Order Value
+//   Select 'Currr Month OrdValue' as Type, po.IntPONo, po.SOEntryDate, po.PONo, pp.Ord_Qty, Ord_Qty*pp.rate as Gtotal, c.custname
+// From Purchase po inner join purchaseproduct pp on pp.poid =po.poid inner join rawmaterial rm on rm.rawmatid = pp.prodid
+// inner join invent_grntype gt on gt.GrnTypeId = rm.GrnTypeId
+// inner join customer c on c.custid = po.custid left outer join grade g on g.gradeid = pp.GradeID 
+// left outer join Invent_Rawmaterial rmadn on rmadn.Af_ID = rm.RawMatID
+// left outer join ST_HTCondition ht on ht.HTID=rmadn.[HT Condition]
+// left outer join ST_SupplyCondition sc on sc.SCID = rmadn.[Supply Condition]
+// Where  Month(po.Created_Date) = month('01-Apr-24') and   Year(po.Created_Date) = Year(Dateadd(YY,0,'01-Apr-24'))
+// Union All
+// ---Curr Month Prev Year Order Value
+//   Select 'Curr Month Prev Year OrdValue' as Type, po.IntPONo, po.SOEntryDate, po.PONo, pp.Ord_Qty, Ord_Qty*pp.rate as Gtotal, c.custname
+// From Purchase po inner join purchaseproduct pp on pp.poid =po.poid inner join rawmaterial rm on rm.rawmatid = pp.prodid
+// inner join invent_grntype gt on gt.GrnTypeId = rm.GrnTypeId
+// inner join customer c on c.custid = po.custid left outer join grade g on g.gradeid = pp.GradeID 
+// left outer join Invent_Rawmaterial rmadn on rmadn.Af_ID = rm.RawMatID
+// left outer join ST_HTCondition ht on ht.HTID=rmadn.[HT Condition]
+// left outer join ST_SupplyCondition sc on sc.SCID = rmadn.[Supply Condition]
+// Where  Month(po.Created_Date) = month('01-Apr-24') and   Year(po.Created_Date) = Year(Dateadd(YY,-1,'01-Apr-24'))
+// Union All
+// ---Curr Quarter Order Value
+//   Select 'Curr Quarter OrdValue' as Type, po.IntPONo, po.SOEntryDate, po.PONo, pp.Ord_Qty, Ord_Qty*pp.rate as Gtotal, c.custname
+// From Purchase po inner join purchaseproduct pp on pp.poid =po.poid inner join rawmaterial rm on rm.rawmatid = pp.prodid
+// inner join invent_grntype gt on gt.GrnTypeId = rm.GrnTypeId
+// inner join customer c on c.custid = po.custid left outer join grade g on g.gradeid = pp.GradeID 
+// left outer join Invent_Rawmaterial rmadn on rmadn.Af_ID = rm.RawMatID
+// left outer join ST_HTCondition ht on ht.HTID=rmadn.[HT Condition]
+// left outer join ST_SupplyCondition sc on sc.SCID = rmadn.[Supply Condition]
+// Where  (Select Quarter+'-'+yearname from icSoft.dbo.ST_FinancialYear Where po.Created_Date between fromdate and ToDate ) =
+//  (Select Quarter+'-'+yearname from icSoft.dbo.ST_FinancialYear Where Dateadd(YY,0,'01-Apr-24') between fromdate and ToDate )
+// Union All
+// ---Curr Quarter Prev Year Order Value
+//   Select 'Curr Quarter Prev Year OrdValue', po.IntPONo, po.SOEntryDate, po.PONo, pp.Ord_Qty, Ord_Qty*pp.rate as Gtotal, c.custname
+// From Purchase po inner join purchaseproduct pp on pp.poid =po.poid inner join rawmaterial rm on rm.rawmatid = pp.prodid
+// inner join invent_grntype gt on gt.GrnTypeId = rm.GrnTypeId
+// inner join customer c on c.custid = po.custid left outer join grade g on g.gradeid = pp.GradeID 
+// left outer join Invent_Rawmaterial rmadn on rmadn.Af_ID = rm.RawMatID
+// left outer join ST_HTCondition ht on ht.HTID=rmadn.[HT Condition]
+// left outer join ST_SupplyCondition sc on sc.SCID = rmadn.[Supply Condition]
+// Where  (Select Quarter+'-'+yearname from icSoft.dbo.ST_FinancialYear Where po.Created_Date between fromdate and ToDate ) =
+//  (Select Quarter+'-'+yearname from icSoft.dbo.ST_FinancialYear Where Dateadd(YY,-1,'01-Apr-24') between fromdate and ToDate )
+//  Union All
+//  ---Curr Year Order Value
+//   Select 'Curr Year OrdValue' as Type, po.IntPONo, po.SOEntryDate, po.PONo, pp.Ord_Qty, Ord_Qty*pp.rate as Gtotal, c.custname
+// From Purchase po inner join purchaseproduct pp on pp.poid =po.poid inner join rawmaterial rm on rm.rawmatid = pp.prodid
+// inner join invent_grntype gt on gt.GrnTypeId = rm.GrnTypeId
+// inner join customer c on c.custid = po.custid left outer join grade g on g.gradeid = pp.GradeID 
+// left outer join Invent_Rawmaterial rmadn on rmadn.Af_ID = rm.RawMatID
+// left outer join ST_HTCondition ht on ht.HTID=rmadn.[HT Condition]
+// left outer join ST_SupplyCondition sc on sc.SCID = rmadn.[Supply Condition]
+// Where (Select yearname from icSoft.dbo.ST_FinancialYear Where Convert(Date,po.Created_Date,11) between fromdate and ToDate ) =
+//  (Select yearname from icSoft.dbo.ST_FinancialYear Where Dateadd(YY,0,'01-Apr-24') between fromdate and ToDate )
+//  Union All
+//  ---Prev Year Order Value
+//   Select 'Prev Year OrdValue', po.IntPONo, po.SOEntryDate, po.PONo, pp.Ord_Qty, Ord_Qty*pp.rate as Gtotal, c.custname
+// From Purchase po inner join purchaseproduct pp on pp.poid =po.poid inner join rawmaterial rm on rm.rawmatid = pp.prodid
+// inner join invent_grntype gt on gt.GrnTypeId = rm.GrnTypeId
+// inner join customer c on c.custid = po.custid left outer join grade g on g.gradeid = pp.GradeID 
+// left outer join Invent_Rawmaterial rmadn on rmadn.Af_ID = rm.RawMatID
+// left outer join ST_HTCondition ht on ht.HTID=rmadn.[HT Condition]
+// left outer join ST_SupplyCondition sc on sc.SCID = rmadn.[Supply Condition]
+// Where (Select yearname from icSoft.dbo.ST_FinancialYear Where Convert(Date,po.Created_Date,11) between fromdate and ToDate ) =
+//  (Select yearname from icSoft.dbo.ST_FinancialYear Where Dateadd(YY,-1,'01-Apr-24') between fromdate and ToDate ) ) p
+//  ---filter on Type
+//  --where p.type = '${type}'`;
 
- console.log(querry);
+//  console.log(querry);
 
-
-  try {
-    await sql.connect(config); // Wait for the database connection to be established
-    let request = new sql.Request();
-    const data = await request.query(querry); // Wait for the query to complete
-    res.send(data.recordset); // Assuming you want to send the query result as a response
-  } catch (err) {
-    console.error(err);
-    res.status(500).send({
-      message: err.message || "Some error occurred while retrieving data.",
-    });
-  }
-};
+//   try {
+//     await sql.connect(config); // Wait for the database connection to be established
+//     let request = new sql.Request();
+//     const data = await request.query(querry); // Wait for the query to complete
+//     res.send(data.recordset); // Assuming you want to send the query result as a response
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).send({
+//       message: err.message || "Some error occurred while retrieving data.",
+//     });
+//   }
+// };
 
 const order_value_details = async (req, res) => {
-  const type = req.query.type
-  const querry = `select Type, IntPONo, SOEntryDate, PONo, Ord_Qty, GTotal, custname from (
----Curr Month Order Value
-  Select 'Currr Month OrdValue' as Type, po.IntPONo, po.SOEntryDate, po.PONo, pp.Ord_Qty, Ord_Qty*pp.rate as Gtotal, c.custname
-From Purchase po inner join purchaseproduct pp on pp.poid =po.poid inner join rawmaterial rm on rm.rawmatid = pp.prodid
-inner join invent_grntype gt on gt.GrnTypeId = rm.GrnTypeId
-inner join customer c on c.custid = po.custid left outer join grade g on g.gradeid = pp.GradeID 
-left outer join Invent_Rawmaterial rmadn on rmadn.Af_ID = rm.RawMatID
-left outer join ST_HTCondition ht on ht.HTID=rmadn.[HT Condition]
-left outer join ST_SupplyCondition sc on sc.SCID = rmadn.[Supply Condition]
-Where  Month(po.Created_Date) = month('01-Apr-24') and   Year(po.Created_Date) = Year(Dateadd(YY,0,'01-Apr-24'))
-Union All
----Curr Month Prev Year Order Value
-  Select 'Curr Month Prev Year OrdValue' as Type, po.IntPONo, po.SOEntryDate, po.PONo, pp.Ord_Qty, Ord_Qty*pp.rate as Gtotal, c.custname
-From Purchase po inner join purchaseproduct pp on pp.poid =po.poid inner join rawmaterial rm on rm.rawmatid = pp.prodid
-inner join invent_grntype gt on gt.GrnTypeId = rm.GrnTypeId
-inner join customer c on c.custid = po.custid left outer join grade g on g.gradeid = pp.GradeID 
-left outer join Invent_Rawmaterial rmadn on rmadn.Af_ID = rm.RawMatID
-left outer join ST_HTCondition ht on ht.HTID=rmadn.[HT Condition]
-left outer join ST_SupplyCondition sc on sc.SCID = rmadn.[Supply Condition]
-Where  Month(po.Created_Date) = month('01-Apr-24') and   Year(po.Created_Date) = Year(Dateadd(YY,-1,'01-Apr-24'))
-Union All
----Curr Quarter Order Value
-  Select 'Curr Quarter OrdValue' as Type, po.IntPONo, po.SOEntryDate, po.PONo, pp.Ord_Qty, Ord_Qty*pp.rate as Gtotal, c.custname
-From Purchase po inner join purchaseproduct pp on pp.poid =po.poid inner join rawmaterial rm on rm.rawmatid = pp.prodid
-inner join invent_grntype gt on gt.GrnTypeId = rm.GrnTypeId
-inner join customer c on c.custid = po.custid left outer join grade g on g.gradeid = pp.GradeID 
-left outer join Invent_Rawmaterial rmadn on rmadn.Af_ID = rm.RawMatID
-left outer join ST_HTCondition ht on ht.HTID=rmadn.[HT Condition]
-left outer join ST_SupplyCondition sc on sc.SCID = rmadn.[Supply Condition]
-Where  (Select Quarter+'-'+yearname from icSoft.dbo.ST_FinancialYear Where po.Created_Date between fromdate and ToDate ) =
- (Select Quarter+'-'+yearname from icSoft.dbo.ST_FinancialYear Where Dateadd(YY,0,'01-Apr-24') between fromdate and ToDate )
-Union All
----Curr Quarter Prev Year Order Value
-  Select 'Curr Quarter Prev Year OrdValue', po.IntPONo, po.SOEntryDate, po.PONo, pp.Ord_Qty, Ord_Qty*pp.rate as Gtotal, c.custname
-From Purchase po inner join purchaseproduct pp on pp.poid =po.poid inner join rawmaterial rm on rm.rawmatid = pp.prodid
-inner join invent_grntype gt on gt.GrnTypeId = rm.GrnTypeId
-inner join customer c on c.custid = po.custid left outer join grade g on g.gradeid = pp.GradeID 
-left outer join Invent_Rawmaterial rmadn on rmadn.Af_ID = rm.RawMatID
-left outer join ST_HTCondition ht on ht.HTID=rmadn.[HT Condition]
-left outer join ST_SupplyCondition sc on sc.SCID = rmadn.[Supply Condition]
-Where  (Select Quarter+'-'+yearname from icSoft.dbo.ST_FinancialYear Where po.Created_Date between fromdate and ToDate ) =
- (Select Quarter+'-'+yearname from icSoft.dbo.ST_FinancialYear Where Dateadd(YY,-1,'01-Apr-24') between fromdate and ToDate )
- Union All
- ---Curr Year Order Value
-  Select 'Curr Year OrdValue' as Type, po.IntPONo, po.SOEntryDate, po.PONo, pp.Ord_Qty, Ord_Qty*pp.rate as Gtotal, c.custname
-From Purchase po inner join purchaseproduct pp on pp.poid =po.poid inner join rawmaterial rm on rm.rawmatid = pp.prodid
-inner join invent_grntype gt on gt.GrnTypeId = rm.GrnTypeId
-inner join customer c on c.custid = po.custid left outer join grade g on g.gradeid = pp.GradeID 
-left outer join Invent_Rawmaterial rmadn on rmadn.Af_ID = rm.RawMatID
-left outer join ST_HTCondition ht on ht.HTID=rmadn.[HT Condition]
-left outer join ST_SupplyCondition sc on sc.SCID = rmadn.[Supply Condition]
-Where (Select yearname from icSoft.dbo.ST_FinancialYear Where Convert(Date,po.Created_Date,11) between fromdate and ToDate ) =
- (Select yearname from icSoft.dbo.ST_FinancialYear Where Dateadd(YY,0,'01-Apr-24') between fromdate and ToDate )
- Union All
- ---Prev Year Order Value
-  Select 'Prev Year OrdValue', po.IntPONo, po.SOEntryDate, po.PONo, pp.Ord_Qty, Ord_Qty*pp.rate as Gtotal, c.custname
-From Purchase po inner join purchaseproduct pp on pp.poid =po.poid inner join rawmaterial rm on rm.rawmatid = pp.prodid
-inner join invent_grntype gt on gt.GrnTypeId = rm.GrnTypeId
-inner join customer c on c.custid = po.custid left outer join grade g on g.gradeid = pp.GradeID 
-left outer join Invent_Rawmaterial rmadn on rmadn.Af_ID = rm.RawMatID
-left outer join ST_HTCondition ht on ht.HTID=rmadn.[HT Condition]
-left outer join ST_SupplyCondition sc on sc.SCID = rmadn.[Supply Condition]
-Where (Select yearname from icSoft.dbo.ST_FinancialYear Where Convert(Date,po.Created_Date,11) between fromdate and ToDate ) =
- (Select yearname from icSoft.dbo.ST_FinancialYear Where Dateadd(YY,-1,'01-Apr-24') between fromdate and ToDate ) ) p
- ---filter on Type
- --where p.type = '${type}'`;
-
- console.log(querry);
-
-  try {
-    await sql.connect(config); // Wait for the database connection to be established
-    let request = new sql.Request();
-    const data = await request.query(querry); // Wait for the query to complete
-    res.send(data.recordset); // Assuming you want to send the query result as a response
-  } catch (err) {
-    console.error(err);
-    res.status(500).send({
-      message: err.message || "Some error occurred while retrieving data.",
-    });
-  }
-};
-
+    const type = req.query.type;
+    const limit = parseInt(req.query.limit, 10) || 10; // default limit to 10 if not provided
+    const offset = parseInt(req.query.offset, 10) || 0; // default offset to 0 if not provided
+  
+    const validTypes = [
+      'Currr Month OrdValue',
+      'Curr Month Prev Year OrdValue',
+      'Curr Quarter OrdValue',
+      'Curr Quarter Prev Year OrdValue',
+      'Curr Year OrdValue',
+      'Prev Year OrdValue'
+    ];
+  
+    const typeFilter = type && validTypes.includes(type) ? `WHERE p.Type = '${type}'` : '';
+  
+    const query = `
+      SELECT Type, IntPONo, SOEntryDate, PONo, Ord_Qty, GTotal, custname
+      FROM (
+        --- Curr Month Order Value
+        SELECT 'Currr Month OrdValue' AS Type, po.IntPONo, po.SOEntryDate, po.PONo, pp.Ord_Qty, Ord_Qty * pp.rate AS GTotal, c.custname
+        FROM Purchase po
+        INNER JOIN purchaseproduct pp ON pp.poid = po.poid
+        INNER JOIN rawmaterial rm ON rm.rawmatid = pp.prodid
+        INNER JOIN invent_grntype gt ON gt.GrnTypeId = rm.GrnTypeId
+        INNER JOIN customer c ON c.custid = po.custid
+        LEFT OUTER JOIN grade g ON g.gradeid = pp.GradeID
+        LEFT OUTER JOIN Invent_Rawmaterial rmadn ON rmadn.Af_ID = rm.RawMatID
+        LEFT OUTER JOIN ST_HTCondition ht ON ht.HTID = rmadn.[HT Condition]
+        LEFT OUTER JOIN ST_SupplyCondition sc ON sc.SCID = rmadn.[Supply Condition]
+        WHERE Month(po.Created_Date) = Month('01-Apr-24') AND Year(po.Created_Date) = Year(Dateadd(YY, 0, '01-Apr-24'))
+  
+        UNION ALL
+  
+        --- Curr Month Prev Year Order Value
+        SELECT 'Curr Month Prev Year OrdValue' AS Type, po.IntPONo, po.SOEntryDate, po.PONo, pp.Ord_Qty, Ord_Qty * pp.rate AS GTotal, c.custname
+        FROM Purchase po
+        INNER JOIN purchaseproduct pp ON pp.poid = po.poid
+        INNER JOIN rawmaterial rm ON rm.rawmatid = pp.prodid
+        INNER JOIN invent_grntype gt ON gt.GrnTypeId = rm.GrnTypeId
+        INNER JOIN customer c ON c.custid = po.custid
+        LEFT OUTER JOIN grade g ON g.gradeid = pp.GradeID
+        LEFT OUTER JOIN Invent_Rawmaterial rmadn ON rmadn.Af_ID = rm.RawMatID
+        LEFT OUTER JOIN ST_HTCondition ht ON ht.HTID = rmadn.[HT Condition]
+        LEFT OUTER JOIN ST_SupplyCondition sc ON sc.SCID = rmadn.[Supply Condition]
+        WHERE Month(po.Created_Date) = Month('01-Apr-24') AND Year(po.Created_Date) = Year(Dateadd(YY, -1, '01-Apr-24'))
+  
+        UNION ALL
+  
+        --- Curr Quarter Order Value
+        SELECT 'Curr Quarter OrdValue' AS Type, po.IntPONo, po.SOEntryDate, po.PONo, pp.Ord_Qty, Ord_Qty * pp.rate AS GTotal, c.custname
+        FROM Purchase po
+        INNER JOIN purchaseproduct pp ON pp.poid = po.poid
+        INNER JOIN rawmaterial rm ON rm.rawmatid = pp.prodid
+        INNER JOIN invent_grntype gt ON gt.GrnTypeId = rm.GrnTypeId
+        INNER JOIN customer c ON c.custid = po.custid
+        LEFT OUTER JOIN grade g ON g.gradeid = pp.GradeID
+        LEFT OUTER JOIN Invent_Rawmaterial rmadn ON rmadn.Af_ID = rm.RawMatID
+        LEFT OUTER JOIN ST_HTCondition ht ON ht.HTID = rmadn.[HT Condition]
+        LEFT OUTER JOIN ST_SupplyCondition sc ON sc.SCID = rmadn.[Supply Condition]
+        WHERE (SELECT Quarter + '-' + yearname FROM icSoft.dbo.ST_FinancialYear WHERE po.Created_Date BETWEEN fromdate AND ToDate) =
+              (SELECT Quarter + '-' + yearname FROM icSoft.dbo.ST_FinancialYear WHERE Dateadd(YY, 0, '01-Apr-24') BETWEEN fromdate AND ToDate)
+  
+        UNION ALL
+  
+        --- Curr Quarter Prev Year Order Value
+        SELECT 'Curr Quarter Prev Year OrdValue' AS Type, po.IntPONo, po.SOEntryDate, po.PONo, pp.Ord_Qty, Ord_Qty * pp.rate AS GTotal, c.custname
+        FROM Purchase po
+        INNER JOIN purchaseproduct pp ON pp.poid = po.poid
+        INNER JOIN rawmaterial rm ON rm.rawmatid = pp.prodid
+        INNER JOIN invent_grntype gt ON gt.GrnTypeId = rm.GrnTypeId
+        INNER JOIN customer c ON c.custid = po.custid
+        LEFT OUTER JOIN grade g ON g.gradeid = pp.GradeID
+        LEFT OUTER JOIN Invent_Rawmaterial rmadn ON rmadn.Af_ID = rm.RawMatID
+        LEFT OUTER JOIN ST_HTCondition ht ON ht.HTID = rmadn.[HT Condition]
+        LEFT OUTER JOIN ST_SupplyCondition sc ON sc.SCID = rmadn.[Supply Condition]
+        WHERE (SELECT Quarter + '-' + yearname FROM icSoft.dbo.ST_FinancialYear WHERE po.Created_Date BETWEEN fromdate AND ToDate) =
+              (SELECT Quarter + '-' + yearname FROM icSoft.dbo.ST_FinancialYear WHERE Dateadd(YY, -1, '01-Apr-24') BETWEEN fromdate AND ToDate)
+  
+        UNION ALL
+  
+        --- Curr Year Order Value
+        SELECT 'Curr Year OrdValue' AS Type, po.IntPONo, po.SOEntryDate, po.PONo, pp.Ord_Qty, Ord_Qty * pp.rate AS GTotal, c.custname
+        FROM Purchase po
+        INNER JOIN purchaseproduct pp ON pp.poid = po.poid
+        INNER JOIN rawmaterial rm ON rm.rawmatid = pp.prodid
+        INNER JOIN invent_grntype gt ON gt.GrnTypeId = rm.GrnTypeId
+        INNER JOIN customer c ON c.custid = po.custid
+        LEFT OUTER JOIN grade g ON g.gradeid = pp.GradeID
+        LEFT OUTER JOIN Invent_Rawmaterial rmadn ON rmadn.Af_ID = rm.RawMatID
+        LEFT OUTER JOIN ST_HTCondition ht ON ht.HTID = rmadn.[HT Condition]
+        LEFT OUTER JOIN ST_SupplyCondition sc ON sc.SCID = rmadn.[Supply Condition]
+        WHERE (SELECT yearname FROM icSoft.dbo.ST_FinancialYear WHERE Convert(Date, po.Created_Date, 11) BETWEEN fromdate AND ToDate) =
+              (SELECT yearname FROM icSoft.dbo.ST_FinancialYear WHERE Dateadd(YY, 0, '01-Apr-24') BETWEEN fromdate AND ToDate)
+  
+        UNION ALL
+  
+        --- Prev Year Order Value
+        SELECT 'Prev Year OrdValue' AS Type, po.IntPONo, po.SOEntryDate, po.PONo, pp.Ord_Qty, Ord_Qty * pp.rate AS GTotal, c.custname
+        FROM Purchase po
+        INNER JOIN purchaseproduct pp ON pp.poid = po.poid
+        INNER JOIN rawmaterial rm ON rm.rawmatid = pp.prodid
+        INNER JOIN invent_grntype gt ON gt.GrnTypeId = rm.GrnTypeId
+        INNER JOIN customer c ON c.custid = po.custid
+        LEFT OUTER JOIN grade g ON g.gradeid = pp.GradeID
+        LEFT OUTER JOIN Invent_Rawmaterial rmadn ON rmadn.Af_ID = rm.RawMatID
+        LEFT OUTER JOIN ST_HTCondition ht ON ht.HTID = rmadn.[HT Condition]
+        LEFT OUTER JOIN ST_SupplyCondition sc ON sc.SCID = rmadn.[Supply Condition]
+        WHERE (SELECT yearname FROM icSoft.dbo.ST_FinancialYear WHERE Convert(Date, po.Created_Date, 11) BETWEEN fromdate AND ToDate) =
+              (SELECT yearname FROM icSoft.dbo.ST_FinancialYear WHERE Dateadd(YY, -1, '01-Apr-24') BETWEEN fromdate AND ToDate)
+      ) p
+      ${typeFilter}
+      ORDER BY SOEntryDate
+      OFFSET ${offset} ROWS FETCH NEXT ${limit} ROWS ONLY
+    `;
+  
+    // console.log(type);
+    // console.log(query);
+  
+    try {
+      await sql.connect(config); // Wait for the database connection to be established
+      let request = new sql.Request();
+      const data = await request.query(query); // Wait for the query to complete
+      res.send(data.recordset); // Assuming you want to send the query result as a response
+    } catch (err) {
+      console.error(err);
+      res.status(500).send({
+        message: err.message || "Some error occurred while retrieving data.",
+      });
+    }
+  };
+  
 const sales_summary = async (req, res) => {
   const date = req.query.date ? req.query.date : new Date().toISOString().split('T')[0];
 
-  console.log(date);
+//   console.log(date);
 
   const querry = `Select AccountName, Round(Sum(CM_Sales)/100000,2) as CMSales, Round(Sum(PCMSales)/100000,2) as PCMSales, Round(Sum(CQSales)/100000,0) as CQSales, Round(Sum(PQSales)/100000,2) CQ_PYSales, Round(Sum(CYSales)/100000,2) as CYSales,
 Round(Sum(PYSales)/100000,2) as PYSales
@@ -516,7 +809,7 @@ from IcSoftLedger.dbo.Transactions t inner join IcSoftLedger.dbo.accounts a on a
  group By AccountName
 `;
 
-console.log(querry);
+// console.log(querry);
 
 
   try {
@@ -535,7 +828,7 @@ console.log(querry);
 const pending_sales_summary = async (req, res) => {
   const date = req.query.date ? req.query.date : new Date().toISOString().split('T')[0];
 
-  console.log(date);
+//   console.log(date);
 
   const querry = `Select Sum(ODBalOrdQty) as ODBalOrdQty, Round(Sum(ODBalOrdValue)/100000,2) ODBalOrdValue, Sum(NOWODBalOrdQty) as NOWODBalOrdQty, 
 Round(Sum(NOWODBalOrdVal)/100000,2) as NOWODBalOrdVal, Sum(NOMODBalOrdQty)/100000 as NOMODBalOrdQty, Round(Sum(NOMODBalOrdVal)/100000,2) NOMODBalOrdVal,
@@ -562,7 +855,7 @@ Union All
  from ST_PendingSalesOrderdetail
  ) t
 `;
-console.log(querry);
+// console.log(querry);
 
   try {
     await sql.connect(config); // Wait for the database connection to be established
@@ -581,7 +874,7 @@ const order_booked_summary = async (req, res) => {
 
   const date = req.query.date ? req.query.date : new Date().toISOString().split('T')[0];
 
-  console.log(date);
+//   console.log(date);
 
   const querry = `Select  Round(Sum(CMCYOrdVal)/100000,2) as CMCY, Round(Sum(CMPYOrdVal)/100000,2) as CMPY, Round(sum(CQCYOrdVal)/100000,2) as CQCY, Round(sum(CQPYOrdVal)/100000,2) as CQPY, Round(sum(CYOrdVal)/100000,2) as CY, Round(sum(PYOrdVal)/100000,2) as PY from (
 ---Curr Month Order Value
@@ -649,7 +942,7 @@ Where (Select yearname from icSoft.dbo.ST_FinancialYear Where Convert(Date,po.Cr
  (Select yearname from icSoft.dbo.ST_FinancialYear Where Dateadd(YY,-1,'${date}') between fromdate and ToDate )) v
 `;
 
-console.log(querry);
+// console.log(querry);
 
 
   try {
@@ -668,7 +961,7 @@ console.log(querry);
 const quotation_summary = async (req, res) => {
   const date = req.query.date ? req.query.date : new Date().toISOString().split('T')[0];
 
-  console.log(date);
+//   console.log(date);
 
   const querry = `select sum(SubQty) as SubQty, Round(sum(SubValue)/100000,2) as SubValue, sum(AcpQty) as Acpqty, Round(sum(AcpValue)/100000,2) as AcpValue, sum(RejQty) as RejQty, Round(sum(RejValue)/100000,2) as RejValue from (
 select count(QuotationProdID) as SubQty , sum(qp.Qty*qp.Price_Unit) as SubValue, 0 as AcpQty, 0 as AcpValue,0 as RejQty, 0 as RejValue
@@ -685,7 +978,7 @@ from quotation_Product qp inner join quotations q on qp.QuotID = q.QuotID
  where Price_Unit = 0 and QuotDate > '${date}' ) v
 `;
 
-console.log(querry);
+// console.log(querry);
 
 
   try {
@@ -705,7 +998,7 @@ const enquiry_summary = async (req, res) => {
 
   const date = req.query.date ? req.query.date : new Date().toISOString().split('T')[0];
 
-  console.log(date);
+//   console.log(date);
 
   const querry = `select 'Enquiry' Module,
 	   count(case when Date_of_Enquiry = '${date}' then IntEnqRefNo end) as  Today,
@@ -719,7 +1012,7 @@ const enquiry_summary = async (req, res) => {
 	    from enquiry
 `;
 
-console.log(querry);
+// console.log(querry);
 
 
   try {
