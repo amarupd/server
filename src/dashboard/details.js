@@ -2,208 +2,163 @@ const sql = require('mssql');
 
 const config = require("../config/config")
 
-const fetchData = async (req, res) => {
-  const date = req.query.date ? req.query.date : new Date().toISOString().split('T')[0];
+// const sales_details = async (req, res) => {
 
-  console.log(date);
+//   const date = req.query.date ? req.query.date : new Date().toISOString().split('T')[0];
 
-  const basicValueQuery = `SELECT SUM(BasicValue) as basictotal 
-      FROM Invoice I INNER JOIN Customer c ON c.custid = I.CustID INNER JOIN Sales_CustType ct ON ct.CTypeID = C.CTypeID
-      WHERE I.InvDate1 = '${date}'`;
+//   console.log(date);
 
-  const grnValueQuery = `SELECT SUM(gds.Qty*Grate) as grnValue  
-      FROM Invent_grn grn INNER JOIN Invent_GrnMaterialdetail gmd ON gmd.Grnno = grn.GrnNo 
-      INNER JOIN Invent_Supplier sup ON sup.supid = grn.supid INNER JOIN RawMaterial rm ON rm.RawMatid = gmd.Rawmatid 
-      LEFT OUTER JOIN (
-        SELECT GrnID, pd.DelSchedule, SUM(Qty) as Qty  
-        FROM Invent_GrnDeliverySchedule gds 
-        INNER JOIN Invent_PurchaseDelivery pd ON pd.PODespatchID = gds.DelSchID
-        GROUP BY GrnID, pd.DelSchedule
-      ) gds ON gds.grnid = gmd.GRNID
-      WHERE grn.AddnlParameter ='Grn With PO' AND Grn.GrnDate = '${date}'`;
+//   const type = req.query.type
 
-  const POTotalQuery = `SELECT SUM(pp.Ord_Qty*pp.rate) as POTotal 
-      FROM purchase p INNER JOIN purchaseproduct pp ON p.poid = pp.poid
-      WHERE p.PODate = '${date}'`;
+//   const querry = `select MonthSales,  TransactionNumber, TransactionDate, BillNo, '' as Qty, Amount, Name from (
+// -----Current Month Sales
+// Select 'Current Month Sales' as MonthSales ,ah.AccountName, t.TransactionNumber, t.TransactionDate ,t.BillNo, Sum(Case When t.Drcr = 'Cr' then Amount else -Amount end) as Amount, p.Name
+// from IcSoftLedger.dbo.Transactions t inner join IcSoftLedger.dbo.accounts a on a.ID = t.accountid 
+// inner join IcSoftLedger.dbo.accountheads ah on ah.AccountID = a.accountid left outer join (
+// Select a.Name, a.AccountCode, t1.TransactionNumber from IcSoftLedger.dbo.Transactions t1 inner join IcSoftLedger.dbo.accounts a on a.ID = t1.AccountID Where OLevelID in (2,6) 
+//  and  Month(t1.transactiondate) = month('${date}') and   Year(t1.transactiondate) = Year(Dateadd(YY,0,'${date}')) ) p
+// on p.TransactionNumber = t.TransactionNumber
+//  Where ah.AccountTypeID = 4  and Month(t.transactiondate) = month('${date}') and   Year(t.transactiondate) = Year(Dateadd(YY,0,'${date}'))
+//  and t.Edited<>'D' and t.Approved = 'Y'
+//  Group By ah.AccountName, t.TransactionNumber,t.TransactionDate , t.BillNo, p.Name
+//  Union All
+//  -----Current Month Sales Prev. year
+// Select 'Current Month Sales Pre. Year' as MonthSales ,ah.AccountName, t.TransactionNumber, t.TransactionDate ,t.BillNo, Sum(Case When t.Drcr = 'Cr' then Amount else -Amount end) as Amount, p.Name
+// from IcSoftLedger.dbo.Transactions t inner join IcSoftLedger.dbo.accounts a on a.ID = t.accountid 
+// inner join IcSoftLedger.dbo.accountheads ah on ah.AccountID = a.accountid left outer join (
+// Select a.Name, a.AccountCode, t1.TransactionNumber from IcSoftLedger.dbo.Transactions t1 inner join IcSoftLedger.dbo.accounts a on a.ID = t1.AccountID Where OLevelID in (2,6) 
+//  and  Month(t1.transactiondate) = month('${date}') and   Year(t1.transactiondate) = Year(Dateadd(YY,-1,'${date}')) ) p
+// on p.TransactionNumber = t.TransactionNumber
+//  Where ah.AccountTypeID = 4  and Month(t.transactiondate) = month('${date}') and   Year(t.transactiondate) = Year(Dateadd(YY,-1,'${date}'))
+//  and t.Edited<>'D' and t.Approved = 'Y'
+//  Group By ah.AccountName, t.TransactionNumber,t.TransactionDate , t.BillNo, p.Name
+//  Union All
+//  -----Current Quarter Sales
+// Select 'Current Quarter Sales Pre. Year' as MonthSales ,ah.AccountName, t.TransactionNumber, t.TransactionDate ,t.BillNo, Sum(Case When t.Drcr = 'Cr' then Amount else -Amount end) as Amount, p.Name
+// from IcSoftLedger.dbo.Transactions t inner join IcSoftLedger.dbo.accounts a on a.ID = t.accountid 
+// inner join IcSoftLedger.dbo.accountheads ah on ah.AccountID = a.accountid left outer join (
+// Select a.Name, a.AccountCode, t1.TransactionNumber from IcSoftLedger.dbo.Transactions t1 inner join IcSoftLedger.dbo.accounts a on a.ID = t1.AccountID Where OLevelID in (2,6) 
+//  and (Select Quarter+'-'+yearname from icSoft.dbo.ST_FinancialYear Where t1.TransactionDate between fromdate and ToDate ) =
+//  (Select Quarter+'-'+yearname from icSoft.dbo.ST_FinancialYear Where '${date}' between fromdate and ToDate ) ) p
+// on p.TransactionNumber = t.TransactionNumber
+//  Where ah.AccountTypeID = 4  and (Select Quarter+'-'+yearname from icSoft.dbo.ST_FinancialYear Where t.TransactionDate between fromdate and ToDate ) =
+//  (Select Quarter+'-'+yearname from icSoft.dbo.ST_FinancialYear Where ('${date}')  between fromdate and ToDate )
+//  and t.Edited<>'D' and t.Approved = 'Y'
+//  Group By ah.AccountName, t.TransactionNumber,t.TransactionDate , t.BillNo, p.Name ) v
+// ----filter on Type
+// --where v.MonthSales in ('${type}')
+// order by TransactionDate
+// `;
 
-  try {
-    await sql.connect(config);
-    let request = new sql.Request();
+// console.log(querry);
 
-    const basicValueResult = await request.query(basicValueQuery);
-    const grnValueResult = await request.query(grnValueQuery);
-    const POTotalResult = await request.query(POTotalQuery);
-
-    // const response = {
-    //   basicValue: parseFloat(basicValueResult.recordset[0].basictotal.toFixed(2)),
-    //   grnValue: parseFloat(grnValueResult.recordset[0].grnValue.toFixed(2)),
-    //   POTotal: parseFloat(POTotalResult.recordset[0].POTotal.toFixed(2)),
-    // };
-    let basicValue = 0;
-    let grnValue = 0;
-    let POTotal = 0;
-    if (basicValueResult.recordset[0].basictotal) {
-      basicValue = parseFloat(basicValueResult.recordset[0].basictotal.toFixed(2))
-    }
-    if (grnValueResult.recordset[0].grnValue) {
-      grnValue = parseFloat(grnValueResult.recordset[0].grnValue.toFixed(2))
-    }
-    if (POTotalResult.recordset[0].POTotal) {
-      POTotal = parseFloat(POTotalResult.recordset[0].POTotal.toFixed(2))
-    }
-
-
-    const response = {
-      basicValue: basicValue,
-      grnValue: grnValue,
-      POTotal: POTotal,
-    };
-
-    //   res.send(JSON.stringify(response, null, 2));
-    res.send(response);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send({
-      message: err.message || "Some error occurred while retrieving data.",
-    });
-  }
-};
-
-const BasicValue = async (req, res) => {
-  const date = req.query.date ? req.query.date : new Date().toISOString().split('T')[0];
-
-  const querry = `Select custcode, custname, invdate1, invoiceno1, sum(BasicValue) as basictotal
-    from Invoice I inner join Customer c on c.custid = I.CustID inner join Sales_CustType ct on ct.CTypeID = C.CTypeID
-    Where  I.InvDate1 = '${date}'
-    group by custcode, custname, invoiceno1,invdate1
-    order by CustCode,InvoiceNo1`;
-
-  try {
-    await sql.connect(config); // Wait for the database connection to be established
-    let request = new sql.Request();
-    const data = await request.query(querry); // Wait for the query to complete
-    res.send(data.recordset); // Assuming you want to send the query result as a response
-  } catch (err) {
-    console.error(err);
-    res.status(500).send({
-      message: err.message || "Some error occurred while retrieving data.",
-    });
-  }
-};
-
-const BasicValuerange = async (req, res) => {
-  const date1 = req.query.fromdate ? req.query.fromdate : new Date().toISOString().split('T')[0];
-  const date2 = req.query.todate ? req.query.todate : new Date().toISOString().split('T')[0];
-
-
-  const querry = `Select custcode, custname, invdate1, invoiceno1, sum(BasicValue) as basictotal
-    from Invoice I inner join Customer c on c.custid = I.CustID inner join Sales_CustType ct on ct.CTypeID = C.CTypeID
-    Where  I.InvDate1 between '${date1}' and '${date2}'
-    group by custcode, custname, invoiceno1,invdate1
-    order by CustCode,InvoiceNo1`;
-
-  try {
-    await sql.connect(config); // Wait for the database connection to be established
-    let request = new sql.Request();
-    const data = await request.query(querry); // Wait for the query to complete
-    res.send(data.recordset); // Assuming you want to send the query result as a response
-  } catch (err) {
-    console.error(err);
-    res.status(500).send({
-      message: err.message || "Some error occurred while retrieving data.",
-    });
-  }
-};
-
-const searchPO = async (req, res) => {
-  const querry = `Select d.PoId, d.PoNo, d.PoDate, d.Addnlparameter, SupName + ' | ' + SupCode As gStrSupplierDisp, RawMatCode + ' | ' + RawMatName 
-    As gStrMatDisp, GCode + ' | ' + Gradename As gStrGradeDisp, d.Ord_Qty, d.Uom, round(d.Rate, 4) as Rate, 
-    d.CurrCode as Currency, ((d.Rate * d.ExRate + Pack) - Discount) as price, round((d.Ord_Qty * ((d.Rate + d.pack) - Discount)), 2) as povalue, d.RawMatId, 
-    d.ProdName, d.ProdId, A.Minlimit, A.Maxlimit, d.TotalPoValue, d.CurrID, CharVals, D.EMPNAME AS POCreatedBY, d.HSNID, GH.HSNCode 
-    From Invent_PoDetails_Query d Left Outer Join GST_HSN_SAC_NO GH on GH.Hsn_Sac_ID = D.HSNID Inner Join (Select Distinct PS.Empid, poid, Minlimit, Maxlimit From Invent_POApprovalLevels PE (Nolock) 
-    Inner Join Invent_POApprovalEmpLevel PS (Nolock) on PE.levelid = PS.Levelid Inner Join Invent_PoDetails_Query P on P.GTotal = 0 and PE.Locationid = 1 
-    or (Case when PE.IsBasic = 'N' then (P.GTotal + (Select isnull(Sum(Amount), 0) From Invent_PoprodWiseTax T Where T.poid = P.Poid)) else P.GTotal End * P.Exrate 
-    <= PE.Maxlimit) and (Case when PE.IsBasic = 'N' then(P.GTotal + (Select isnull(Sum(Amount), 0) From Invent_PoprodWiseTax T Where T.poid = P.Poid)) else P.GTotal End * P.Exrate 
-    >= PE.Minlimit) Where postatus in ('Approval Pending') and PS.Empid = 1 and PE.POType = P.AddnlParameter and PE.Locationid = 1 
-    and PE.Levelid Not In (Select  Distinct Levelid From Invent_POApprovedEmployee A Where A.Poid = P.POiD and A.Levelid = PE.Levelid and PE.Locationid = 1) 
-    and  1=1 ) A on A.poid = d.poid  and Addnlparameter='General Purchase' and  1=1 and D.locationid = 1 and PoStatus = 'Approval Pending' Order By PoPurTypeId, PoDate, 
-    PoNo, PoProductId`;
-
-  try {
-    await sql.connect(config); // Wait for the database connection to be established
-    let request = new sql.Request();
-    const data = await request.query(querry); // Wait for the query to complete
-    res.send(data.recordset); // Assuming you want to send the query result as a response
-  } catch (err) {
-    console.error(err);
-    res.status(500).send({
-      message: err.message || "Some error occurred while retrieving data.",
-    });
-  }
-};
+//   try {
+//     await sql.connect(config); // Wait for the database connection to be established
+//     let request = new sql.Request();
+//     const data = await request.query(querry); // Wait for the query to complete
+//     res.send(data.recordset); // Assuming you want to send the query result as a response
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).send({
+//       message: err.message || "Some error occurred while retrieving data.",
+//     });
+//   }
+// };
 
 const sales_details = async (req, res) => {
-
-  const date = req.query.date ? req.query.date : new Date().toISOString().split('T')[0];
-
-  console.log(date);
-
-  const type = req.query.type
-
-  const querry = `select MonthSales,  TransactionNumber, TransactionDate, BillNo, '' as Qty, Amount, Name from (
------Current Month Sales
-Select 'Current Month Sales' as MonthSales ,ah.AccountName, t.TransactionNumber, t.TransactionDate ,t.BillNo, Sum(Case When t.Drcr = 'Cr' then Amount else -Amount end) as Amount, p.Name
-from IcSoftLedger.dbo.Transactions t inner join IcSoftLedger.dbo.accounts a on a.ID = t.accountid 
-inner join IcSoftLedger.dbo.accountheads ah on ah.AccountID = a.accountid left outer join (
-Select a.Name, a.AccountCode, t1.TransactionNumber from IcSoftLedger.dbo.Transactions t1 inner join IcSoftLedger.dbo.accounts a on a.ID = t1.AccountID Where OLevelID in (2,6) 
- and  Month(t1.transactiondate) = month('${date}') and   Year(t1.transactiondate) = Year(Dateadd(YY,0,'${date}')) ) p
-on p.TransactionNumber = t.TransactionNumber
- Where ah.AccountTypeID = 4  and Month(t.transactiondate) = month('${date}') and   Year(t.transactiondate) = Year(Dateadd(YY,0,'${date}'))
- and t.Edited<>'D' and t.Approved = 'Y'
- Group By ah.AccountName, t.TransactionNumber,t.TransactionDate , t.BillNo, p.Name
- Union All
- -----Current Month Sales Prev. year
-Select 'Current Month Sales Pre. Year' as MonthSales ,ah.AccountName, t.TransactionNumber, t.TransactionDate ,t.BillNo, Sum(Case When t.Drcr = 'Cr' then Amount else -Amount end) as Amount, p.Name
-from IcSoftLedger.dbo.Transactions t inner join IcSoftLedger.dbo.accounts a on a.ID = t.accountid 
-inner join IcSoftLedger.dbo.accountheads ah on ah.AccountID = a.accountid left outer join (
-Select a.Name, a.AccountCode, t1.TransactionNumber from IcSoftLedger.dbo.Transactions t1 inner join IcSoftLedger.dbo.accounts a on a.ID = t1.AccountID Where OLevelID in (2,6) 
- and  Month(t1.transactiondate) = month('${date}') and   Year(t1.transactiondate) = Year(Dateadd(YY,-1,'${date}')) ) p
-on p.TransactionNumber = t.TransactionNumber
- Where ah.AccountTypeID = 4  and Month(t.transactiondate) = month('${date}') and   Year(t.transactiondate) = Year(Dateadd(YY,-1,'${date}'))
- and t.Edited<>'D' and t.Approved = 'Y'
- Group By ah.AccountName, t.TransactionNumber,t.TransactionDate , t.BillNo, p.Name
- Union All
- -----Current Quarter Sales
-Select 'Current Quarter Sales Pre. Year' as MonthSales ,ah.AccountName, t.TransactionNumber, t.TransactionDate ,t.BillNo, Sum(Case When t.Drcr = 'Cr' then Amount else -Amount end) as Amount, p.Name
-from IcSoftLedger.dbo.Transactions t inner join IcSoftLedger.dbo.accounts a on a.ID = t.accountid 
-inner join IcSoftLedger.dbo.accountheads ah on ah.AccountID = a.accountid left outer join (
-Select a.Name, a.AccountCode, t1.TransactionNumber from IcSoftLedger.dbo.Transactions t1 inner join IcSoftLedger.dbo.accounts a on a.ID = t1.AccountID Where OLevelID in (2,6) 
- and (Select Quarter+'-'+yearname from icSoft.dbo.ST_FinancialYear Where t1.TransactionDate between fromdate and ToDate ) =
- (Select Quarter+'-'+yearname from icSoft.dbo.ST_FinancialYear Where '${date}' between fromdate and ToDate ) ) p
-on p.TransactionNumber = t.TransactionNumber
- Where ah.AccountTypeID = 4  and (Select Quarter+'-'+yearname from icSoft.dbo.ST_FinancialYear Where t.TransactionDate between fromdate and ToDate ) =
- (Select Quarter+'-'+yearname from icSoft.dbo.ST_FinancialYear Where ('${date}')  between fromdate and ToDate )
- and t.Edited<>'D' and t.Approved = 'Y'
- Group By ah.AccountName, t.TransactionNumber,t.TransactionDate , t.BillNo, p.Name ) v
-----filter on Type
---where v.MonthSales in ('${type}')
-order by TransactionDate
-`;
-
-console.log(querry);
-
-  try {
-    await sql.connect(config); // Wait for the database connection to be established
-    let request = new sql.Request();
-    const data = await request.query(querry); // Wait for the query to complete
-    res.send(data.recordset); // Assuming you want to send the query result as a response
-  } catch (err) {
-    console.error(err);
-    res.status(500).send({
-      message: err.message || "Some error occurred while retrieving data.",
-    });
-  }
-};
+    const date = req.query.date ? req.query.date : new Date().toISOString().split('T')[0];
+    const type = req.query.type ? req.query.type : 'Current Month Sales';
+    const limit = parseInt(req.query.limit, 10) || 10; // default limit to 10 if not provided
+    const offset = parseInt(req.query.offset, 10) || 0; // default offset to 0 if not provided
+  
+    const querry = `
+      SELECT MonthSales, TransactionNumber, TransactionDate, BillNo, '' AS Qty, Amount, Name 
+      FROM (
+        -- Current Month Sales
+        SELECT 'Current Month Sales' AS MonthSales, ah.AccountName, t.TransactionNumber, t.TransactionDate, t.BillNo, 
+               SUM(CASE WHEN t.Drcr = 'Cr' THEN Amount ELSE -Amount END) AS Amount, p.Name
+        FROM IcSoftLedger.dbo.Transactions t
+        INNER JOIN IcSoftLedger.dbo.accounts a ON a.ID = t.accountid 
+        INNER JOIN IcSoftLedger.dbo.accountheads ah ON ah.AccountID = a.accountid 
+        LEFT OUTER JOIN (
+          SELECT a.Name, a.AccountCode, t1.TransactionNumber 
+          FROM IcSoftLedger.dbo.Transactions t1 
+          INNER JOIN IcSoftLedger.dbo.accounts a ON a.ID = t1.AccountID 
+          WHERE OLevelID IN (2,6) AND Month(t1.transactiondate) = MONTH('${date}') 
+          AND Year(t1.transactiondate) = YEAR(DATEADD(YY,0,'${date}'))
+        ) p ON p.TransactionNumber = t.TransactionNumber
+        WHERE ah.AccountTypeID = 4 AND Month(t.transactiondate) = MONTH('${date}') 
+        AND Year(t.transactiondate) = YEAR(DATEADD(YY,0,'${date}')) 
+        AND t.Edited <> 'D' AND t.Approved = 'Y'
+        GROUP BY ah.AccountName, t.TransactionNumber, t.TransactionDate, t.BillNo, p.Name
+        UNION ALL
+        -- Current Month Sales Prev. year
+        SELECT 'Current Month Sales Pre. Year' AS MonthSales, ah.AccountName, t.TransactionNumber, t.TransactionDate, t.BillNo, 
+               SUM(CASE WHEN t.Drcr = 'Cr' THEN Amount ELSE -Amount END) AS Amount, p.Name
+        FROM IcSoftLedger.dbo.Transactions t
+        INNER JOIN IcSoftLedger.dbo.accounts a ON a.ID = t.accountid 
+        INNER JOIN IcSoftLedger.dbo.accountheads ah ON ah.AccountID = a.accountid 
+        LEFT OUTER JOIN (
+          SELECT a.Name, a.AccountCode, t1.TransactionNumber 
+          FROM IcSoftLedger.dbo.Transactions t1 
+          INNER JOIN IcSoftLedger.dbo.accounts a ON a.ID = t1.AccountID 
+          WHERE OLevelID IN (2,6) AND Month(t1.transactiondate) = MONTH('${date}') 
+          AND Year(t1.transactiondate) = YEAR(DATEADD(YY,-1,'${date}'))
+        ) p ON p.TransactionNumber = t.TransactionNumber
+        WHERE ah.AccountTypeID = 4 AND Month(t.transactiondate) = MONTH('${date}') 
+        AND Year(t.transactiondate) = YEAR(DATEADD(YY,-1,'${date}')) 
+        AND t.Edited <> 'D' AND t.Approved = 'Y'
+        GROUP BY ah.AccountName, t.TransactionNumber, t.TransactionDate, t.BillNo, p.Name
+        UNION ALL
+        -- Current Quarter Sales
+        SELECT 'Current Quarter Sales Pre. Year' AS MonthSales, ah.AccountName, t.TransactionNumber, t.TransactionDate, t.BillNo, 
+               SUM(CASE WHEN t.Drcr = 'Cr' THEN Amount ELSE -Amount END) AS Amount, p.Name
+        FROM IcSoftLedger.dbo.Transactions t
+        INNER JOIN IcSoftLedger.dbo.accounts a ON a.ID = t.accountid 
+        INNER JOIN IcSoftLedger.dbo.accountheads ah ON ah.AccountID = a.accountid 
+        LEFT OUTER JOIN (
+          SELECT a.Name, a.AccountCode, t1.TransactionNumber 
+          FROM IcSoftLedger.dbo.Transactions t1 
+          INNER JOIN IcSoftLedger.dbo.accounts a ON a.ID = t1.AccountID 
+          WHERE OLevelID IN (2,6) 
+          AND (SELECT Quarter + '-' + yearname 
+               FROM icSoft.dbo.ST_FinancialYear 
+               WHERE t1.TransactionDate BETWEEN fromdate AND ToDate) = 
+              (SELECT Quarter + '-' + yearname 
+               FROM icSoft.dbo.ST_FinancialYear 
+               WHERE '${date}' BETWEEN fromdate AND ToDate)
+        ) p ON p.TransactionNumber = t.TransactionNumber
+        WHERE ah.AccountTypeID = 4 
+        AND (SELECT Quarter + '-' + yearname 
+             FROM icSoft.dbo.ST_FinancialYear 
+             WHERE t.TransactionDate BETWEEN fromdate AND ToDate) = 
+            (SELECT Quarter + '-' + yearname 
+             FROM icSoft.dbo.ST_FinancialYear 
+             WHERE '${date}' BETWEEN fromdate AND ToDate) 
+        AND t.Edited <> 'D' AND t.Approved = 'Y'
+        GROUP BY ah.AccountName, t.TransactionNumber, t.TransactionDate, t.BillNo, p.Name
+      ) v
+      WHERE MonthSales = '${type}'
+      ORDER BY TransactionDate
+      OFFSET ${offset} ROWS FETCH NEXT ${limit} ROWS ONLY
+    `;
+  
+    console.log(date);
+    console.log(querry);
+  
+    try {
+      await sql.connect(config);
+      let request = new sql.Request();
+      const data = await request.query(querry);
+      res.send(data.recordset);
+    } catch (err) {
+      console.error(err);
+      res.status(500).send({
+        message: err.message || "Some error occurred while retrieving data.",
+      });
+    }
+  };
+  
 
 const quatation_details = async (req, res) => {
 
@@ -713,10 +668,6 @@ console.log(querry);
   }
 };
 module.exports = {
-  fetchData,
-  BasicValue,
-  BasicValuerange,
-  searchPO,
   sales_details,
   quatation_details,
   enquiry_details,
