@@ -116,18 +116,41 @@ const BasicValuerange = async (req, res) => {
 };
 
 const searchPO = async (req, res) => {
-  const querry = `Select d.PoId, d.PoNo, d.PoDate, d.Addnlparameter, SupName + ' | ' + SupCode As gStrSupplierDisp, RawMatCode + ' | ' + RawMatName 
-    As gStrMatDisp, GCode + ' | ' + Gradename As gStrGradeDisp, d.Ord_Qty, d.Uom, round(d.Rate, 4) as Rate, 
-    d.CurrCode as Currency, ((d.Rate * d.ExRate + Pack) - Discount) as price, round((d.Ord_Qty * ((d.Rate + d.pack) - Discount)), 2) as povalue, d.RawMatId, 
-    d.ProdName, d.ProdId, A.Minlimit, A.Maxlimit, d.TotalPoValue, d.CurrID, CharVals, D.EMPNAME AS POCreatedBY, d.HSNID, GH.HSNCode 
-    From Invent_PoDetails_Query d Left Outer Join GST_HSN_SAC_NO GH on GH.Hsn_Sac_ID = D.HSNID Inner Join (Select Distinct PS.Empid, poid, Minlimit, Maxlimit From Invent_POApprovalLevels PE (Nolock) 
-    Inner Join Invent_POApprovalEmpLevel PS (Nolock) on PE.levelid = PS.Levelid Inner Join Invent_PoDetails_Query P on P.GTotal = 0 and PE.Locationid = 1 
-    or (Case when PE.IsBasic = 'N' then (P.GTotal + (Select isnull(Sum(Amount), 0) From Invent_PoprodWiseTax T Where T.poid = P.Poid)) else P.GTotal End * P.Exrate 
-    <= PE.Maxlimit) and (Case when PE.IsBasic = 'N' then(P.GTotal + (Select isnull(Sum(Amount), 0) From Invent_PoprodWiseTax T Where T.poid = P.Poid)) else P.GTotal End * P.Exrate 
-    >= PE.Minlimit) Where postatus in ('Approval Pending') and PS.Empid = 1 and PE.POType = P.AddnlParameter and PE.Locationid = 1 
-    and PE.Levelid Not In (Select  Distinct Levelid From Invent_POApprovedEmployee A Where A.Poid = P.POiD and A.Levelid = PE.Levelid and PE.Locationid = 1) 
-    and  1=1 ) A on A.poid = d.poid  and Addnlparameter='General Purchase' and  1=1 and D.locationid = 1 and PoStatus = 'Approval Pending' Order By PoPurTypeId, PoDate, 
-    PoNo, PoProductId`;
+  // const querry = `Select d.PoId, d.PoNo, d.PoDate, d.Addnlparameter, SupName + ' | ' + SupCode As gStrSupplierDisp, RawMatCode + ' | ' + RawMatName 
+  //   As gStrMatDisp, GCode + ' | ' + Gradename As gStrGradeDisp, d.Ord_Qty, d.Uom, round(d.Rate, 4) as Rate, 
+  //   d.CurrCode as Currency, ((d.Rate * d.ExRate + Pack) - Discount) as price, round((d.Ord_Qty * ((d.Rate + d.pack) - Discount)), 2) as povalue, d.RawMatId, 
+  //   d.ProdName, d.ProdId, A.Minlimit, A.Maxlimit, d.TotalPoValue, d.CurrID, CharVals, D.EMPNAME AS POCreatedBY, d.HSNID, GH.HSNCode 
+  //   From Invent_PoDetails_Query d Left Outer Join GST_HSN_SAC_NO GH on GH.Hsn_Sac_ID = D.HSNID Inner Join (Select Distinct PS.Empid, poid, Minlimit, Maxlimit From Invent_POApprovalLevels PE (Nolock) 
+  //   Inner Join Invent_POApprovalEmpLevel PS (Nolock) on PE.levelid = PS.Levelid Inner Join Invent_PoDetails_Query P on P.GTotal = 0 and PE.Locationid = 1 
+  //   or (Case when PE.IsBasic = 'N' then (P.GTotal + (Select isnull(Sum(Amount), 0) From Invent_PoprodWiseTax T Where T.poid = P.Poid)) else P.GTotal End * P.Exrate 
+  //   <= PE.Maxlimit) and (Case when PE.IsBasic = 'N' then(P.GTotal + (Select isnull(Sum(Amount), 0) From Invent_PoprodWiseTax T Where T.poid = P.Poid)) else P.GTotal End * P.Exrate 
+  //   >= PE.Minlimit) Where postatus in ('Approval Pending') and PS.Empid = 1 and PE.POType = P.AddnlParameter and PE.Locationid = 1 
+  //   and PE.Levelid Not In (Select  Distinct Levelid From Invent_POApprovedEmployee A Where A.Poid = P.POiD and A.Levelid = PE.Levelid and PE.Locationid = 1) 
+  //   and  1=1 ) A on A.poid = d.poid  and Addnlparameter='General Purchase' and  1=1 and D.locationid = 1 and PoStatus = 'Approval Pending' Order By PoPurTypeId, PoDate, 
+  //   PoNo, PoProductId`;
+
+  const querry = `Select D.POID, d.PoNo, d.PoDate, d.Addnlparameter, SupName As gStrSupplierDisp, Rawmatcode + ' | ' + Rawmatname As gStrMatDisp, d.Ord_Qty, d.Uom, Round(d.Rate, 4) as Rate, 
+ d.CurrCode as Currency, ((d.Rate * d.ExRate + Pack) - Discount) as price, round((d.Ord_Qty * ((d.Rate + d.pack) - Discount)), 2) as povalue,
+ d.ProdName, A.Minlimit, A.Maxlimit, d.TotalPoValue, D.EMPNAME AS POCreatedBY, GH.HSNCode 
+ From Invent_PoDetails_Query d Left Outer Join GST_HSN_SAC_NO GH on GH.Hsn_Sac_ID = D.HSNID Inner Join (Select Distinct PS.Empid, poid, Minlimit, Maxlimit From
+  Invent_POApprovalLevels PE (Nolock) 
+ Inner Join Invent_POApprovalEmpLevel PS (Nolock) on PE.levelid = PS.Levelid Inner Join Invent_PoDetails_Query P on P.GTotal = 0 
+ or (Case when PE.IsBasic = 'N' then (P.GTotal + (Select isnull(Sum(Amount), 0) From Invent_PoprodWiseTax T Where T.poid = P.Poid)) else P.GTotal End * P.Exrate 
+ <= ( Select MAX (Maxlimit) From Invent_POApprovalLevels Where Potype =P.AddnlParameter )) and (Case when PE.IsBasic = 'N' then (P.GTotal + (Select isnull(Sum(Amount), 0) 
+ From Invent_PoprodWiseTax T Where T.poid = P.Poid)) else P.GTotal End * P.Exrate 
+ >= PE.Minlimit) Where postatus in ('Approval Pending') and PE.POType = P.AddnlParameter 
+ and PE.Levelid Not In (Select Distinct Levelid From Invent_POApprovedEmployee A Where A.Poid = P.POiD and A.Levelid = PE.Levelid) 
+ and PS.Levelid  in (Select Top 1 PS.Levelid  From Invent_POApprovalLevels PE (Nolock)  Inner Join Invent_POApprovalEmpLevel PS 
+ (Nolock) on PE.levelid = PS.Levelid  Where PS.Levelid = PE.levelid   and  EMpid  Not In (Select  Distinct Empid    From Invent_POApprovedEmployee A  
+ Where A.Poid = P.POiD and  A.Levelid = PE.Levelid)  and PoType = P.Addnlparameter  and PS.Levelid Not in (Select  Distinct Levelid   From Invent_POApprovedEmployee A
+   Where A.Poid = P.POiD and  A.Levelid = PE.Levelid ) Order By PE.MinLimit,PE.MaxLimit ) ) A on A.poid = d.poid 
+    
+-----and Addnlparameter='General Purchase'  ---> THIS Addnlparameter IS A COLUMN IN TABLE INVENT_PURCHASE WE HAVE TO APPLY FILTER ON THIS AS IT BIFURCATES THE PURCHASE TYPE
+
+	
+	 and  1=1 
+    and locationid = 1 and PoStatus = 'Approval Pending' Order By PoPurTypeId, PoDate, PoNo, PoProductId 
+`;
 
   try {
     await sql.connect(config); // Wait for the database connection to be established
