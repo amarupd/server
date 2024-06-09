@@ -160,55 +160,122 @@ const sales_details = async (req, res) => {
   };
   
 
+// const quatation_details = async (req, res) => {
+
+//   const type = req.query.type //? req.query.type : ;
+
+//   console.log(type);
+
+//   const querry = `select Type ,Quot_Ref_No, QuotDate, Enq_Ref_No,Qty, GTotal, Name from (
+// select 'Quotation Submitted' as Type, q.Quot_Ref_No, QuotDate, en.Enq_Ref_No,ep.Qty,qp.Qty*qp.Price_Unit as Gtotal, pd.name
+//  from quotation_Product qp inner join quotations q on qp.QuotID = q.QuotID
+//  left outer join Enquiry_Product ep on qp.EnquiryProdID = ep.EnquiryProdID
+//  left outer join enquiry en on en.EnquiryID = ep.EnquiryID
+//  left outer join PartyDetail pd on pd.PartyID = en.Custid
+//  where QuotDate > '01-Apr-2023'
+// UNION ALL
+// select 'Quotation Accepted' as Type, q.Quot_Ref_No, QuotDate, en.Enq_Ref_No,ep.Qty, qp.Qty*qp.Price_Unit as Gtotal, pd.name 
+//  from purchaseproduct pp inner join Purchase p on p.POID = pp.poid
+//  inner join quotation_Product qp on qp.QuotationProdID = pp.QuotationProdId
+//  inner join quotations q on qp.QuotID = q.QuotID
+//  left outer join Enquiry_Product ep on qp.EnquiryProdID = ep.EnquiryProdID
+//  left outer join enquiry en on en.EnquiryID = ep.EnquiryID
+//  left outer join PartyDetail pd on pd.PartyID = en.Custid
+//  where pp.QuotationProdId <> 0 and p.PODate > '01-Apr-2023' 
+//  UNION ALL
+// select 'Quotation Rejected' as Type, q.Quot_Ref_No, QuotDate, en.Enq_Ref_No,ep.Qty, qp.Qty*qp.Price_Unit as Gtotal, pd.name 
+// from quotation_Product qp inner join quotations q on qp.QuotID = q.QuotID
+// left outer join Enquiry_Product ep on qp.EnquiryProdID = ep.EnquiryProdID
+//  left outer join enquiry en on en.EnquiryID = ep.EnquiryID
+//  left outer join PartyDetail pd on pd.PartyID = en.Custid
+//  where Price_Unit = 0 and QuotDate > '01-Apr-2023' ) v
+//  ----filter on Type 
+//  --where v.type = '${type}'
+// `;
+
+// console.log(querry);
+
+
+//   try {
+//     await sql.connect(config); // Wait for the database connection to be established
+//     let request = new sql.Request();
+//     const data = await request.query(querry); // Wait for the query to complete
+//     res.send(data.recordset); // Assuming you want to send the query result as a response
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).send({
+//       message: err.message || "Some error occurred while retrieving data.",
+//     });
+//   }
+// };
+
 const quatation_details = async (req, res) => {
-
-  const type = req.query.type //? req.query.type : ;
-
-  console.log(type);
-
-  const querry = `select Type ,Quot_Ref_No, QuotDate, Enq_Ref_No,Qty, GTotal, Name from (
-select 'Quotation Submitted' as Type, q.Quot_Ref_No, QuotDate, en.Enq_Ref_No,ep.Qty,qp.Qty*qp.Price_Unit as Gtotal, pd.name
- from quotation_Product qp inner join quotations q on qp.QuotID = q.QuotID
- left outer join Enquiry_Product ep on qp.EnquiryProdID = ep.EnquiryProdID
- left outer join enquiry en on en.EnquiryID = ep.EnquiryID
- left outer join PartyDetail pd on pd.PartyID = en.Custid
- where QuotDate > '01-Apr-2023'
-UNION ALL
-select 'Quotation Accepted' as Type, q.Quot_Ref_No, QuotDate, en.Enq_Ref_No,ep.Qty, qp.Qty*qp.Price_Unit as Gtotal, pd.name 
- from purchaseproduct pp inner join Purchase p on p.POID = pp.poid
- inner join quotation_Product qp on qp.QuotationProdID = pp.QuotationProdId
- inner join quotations q on qp.QuotID = q.QuotID
- left outer join Enquiry_Product ep on qp.EnquiryProdID = ep.EnquiryProdID
- left outer join enquiry en on en.EnquiryID = ep.EnquiryID
- left outer join PartyDetail pd on pd.PartyID = en.Custid
- where pp.QuotationProdId <> 0 and p.PODate > '01-Apr-2023' 
- UNION ALL
-select 'Quotation Rejected' as Type, q.Quot_Ref_No, QuotDate, en.Enq_Ref_No,ep.Qty, qp.Qty*qp.Price_Unit as Gtotal, pd.name 
-from quotation_Product qp inner join quotations q on qp.QuotID = q.QuotID
-left outer join Enquiry_Product ep on qp.EnquiryProdID = ep.EnquiryProdID
- left outer join enquiry en on en.EnquiryID = ep.EnquiryID
- left outer join PartyDetail pd on pd.PartyID = en.Custid
- where Price_Unit = 0 and QuotDate > '01-Apr-2023' ) v
- ----filter on Type 
- --where v.type = '${type}'
-`;
-
-console.log(querry);
-
-
-  try {
-    await sql.connect(config); // Wait for the database connection to be established
-    let request = new sql.Request();
-    const data = await request.query(querry); // Wait for the query to complete
-    res.send(data.recordset); // Assuming you want to send the query result as a response
-  } catch (err) {
-    console.error(err);
-    res.status(500).send({
-      message: err.message || "Some error occurred while retrieving data.",
-    });
-  }
-};
-
+    const type = req.query.type;
+    const limit = parseInt(req.query.limit, 10) || 10; // default limit to 10 if not provided
+    const offset = parseInt(req.query.offset, 10) || 0; // default offset to 0 if not provided
+  
+    const validTypes = [
+      'Quotation Submitted',
+      'Quotation Accepted',
+      'Quotation Rejected'
+    ];
+  
+    const typeFilter = type && validTypes.includes(type) ? `WHERE v.type = '${type}'` : '';
+  
+    const query = `
+      SELECT Type, Quot_Ref_No, QuotDate, Enq_Ref_No, Qty, GTotal, Name
+      FROM (
+        SELECT 'Quotation Submitted' AS Type, q.Quot_Ref_No, QuotDate, en.Enq_Ref_No, ep.Qty, qp.Qty * qp.Price_Unit AS Gtotal, pd.name
+        FROM quotation_Product qp
+        INNER JOIN quotations q ON qp.QuotID = q.QuotID
+        LEFT OUTER JOIN Enquiry_Product ep ON qp.EnquiryProdID = ep.EnquiryProdID
+        LEFT OUTER JOIN enquiry en ON en.EnquiryID = ep.EnquiryID
+        LEFT OUTER JOIN PartyDetail pd ON pd.PartyID = en.Custid
+        WHERE QuotDate > '01-Apr-2023'
+        
+        UNION ALL
+  
+        SELECT 'Quotation Accepted' AS Type, q.Quot_Ref_No, QuotDate, en.Enq_Ref_No, ep.Qty, qp.Qty * qp.Price_Unit AS Gtotal, pd.name
+        FROM purchaseproduct pp
+        INNER JOIN Purchase p ON p.POID = pp.poid
+        INNER JOIN quotation_Product qp ON qp.QuotationProdID = pp.QuotationProdId
+        INNER JOIN quotations q ON qp.QuotID = q.QuotID
+        LEFT OUTER JOIN Enquiry_Product ep ON qp.EnquiryProdID = ep.EnquiryProdID
+        LEFT OUTER JOIN enquiry en ON en.EnquiryID = ep.EnquiryID
+        LEFT OUTER JOIN PartyDetail pd ON pd.PartyID = en.Custid
+        WHERE pp.QuotationProdId <> 0 AND p.PODate > '01-Apr-2023'
+        
+        UNION ALL
+  
+        SELECT 'Quotation Rejected' AS Type, q.Quot_Ref_No, QuotDate, en.Enq_Ref_No, ep.Qty, qp.Qty * qp.Price_Unit AS Gtotal, pd.name
+        FROM quotation_Product qp
+        INNER JOIN quotations q ON qp.QuotID = q.QuotID
+        LEFT OUTER JOIN Enquiry_Product ep ON qp.EnquiryProdID = ep.EnquiryProdID
+        LEFT OUTER JOIN enquiry en ON en.EnquiryID = ep.EnquiryID
+        LEFT OUTER JOIN PartyDetail pd ON pd.PartyID = en.Custid
+        WHERE Price_Unit = 0 AND QuotDate > '01-Apr-2023'
+      ) v
+      ${typeFilter}
+      ORDER BY QuotDate
+      OFFSET ${offset} ROWS FETCH NEXT ${limit} ROWS ONLY
+    `;
+  
+    console.log(type);
+    console.log(query);
+  
+    try {
+      await sql.connect(config); // Wait for the database connection to be established
+      let request = new sql.Request();
+      const data = await request.query(query); // Wait for the query to complete
+      res.send(data.recordset); // Assuming you want to send the query result as a response
+    } catch (err) {
+      console.error(err);
+      res.status(500).send({
+        message: err.message || "Some error occurred while retrieving data.",
+      });
+    }
+  };
+  
 const enquiry_details = async (req, res) => {
   const type = req.query.type
   const querry = `select Type, IntEnqRefNo, Date_of_Enquiry, Enq_Ref_No, Qty, '' as Amount, Name from (
