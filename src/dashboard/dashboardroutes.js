@@ -1,5 +1,7 @@
 const dailyController=require('./dashboardcontroller')
 const details=require('./details')
+const update=require('./update_invent_purchase')
+
 
 
 const router=require('express').Router()
@@ -32,6 +34,9 @@ router.get("/order_booked_summary",details.order_booked_summary)
 router.get("/quotation_summary",details.quotation_summary)
 
 router.get("/enquiry_summary",details.enquiry_summary)
+
+router.post("/approve_reject",update.approve_reject)
+
 
 
 //router.post("/changePassword",dailyController.otpverify)
