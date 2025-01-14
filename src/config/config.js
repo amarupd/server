@@ -3,10 +3,10 @@ const configuration=require("./configuration.json")
 const port=configuration.port
 // const configuration = JSON.parse(data);
 const config = {
-    server: 'AMAR\\AMARDUTT',
+    // server: 'AMAR\\AMARDUTT',
     // server: "192.168.1.43",
     // server: 'DESKTOP-9PUG3BB',//
-    // server:"PIYUSH_SINGH\\PIYUSH",
+    server:"PIYUSH_SINGH\\PIYUSH",
     // server:`${configuration.server}`,// aeapl
     // server:'erpsvr',
     // server:'DESKTOP-U57CKVJ',
